@@ -1,0 +1,9 @@
+## Node dependencies
+node_modules/
+
+## Common build/cache artifacts
+**/.cache/
+**/.remotion/
+
+## OS files
+.DS_Store
