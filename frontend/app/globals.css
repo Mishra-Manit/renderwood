@@ -130,9 +130,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
 }
 
 /* Windows XP + Spring theme styles */
@@ -143,8 +140,8 @@
 
 body {
   padding: 0px;
-  background-color: #3a6ea5;
-  background-image: url("/images/bliss-bg.jpg");
+  background-color: #3a6ea5 !important;
+  background-image: url("/images/bliss-bg.jpg") !important;
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
