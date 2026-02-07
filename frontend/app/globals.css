@@ -215,6 +215,13 @@ body {
 header {
   padding: 40px 0px;
   text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.main-container {
+  position: relative;
+  z-index: 2;
 }
 
 .desktop-icons {
