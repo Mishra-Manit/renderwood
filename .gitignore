@@ -4,6 +4,17 @@ node_modules/
 ## Common build/cache artifacts
 **/.cache/
 **/.remotion/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/*.pyc.*
+**/*.pyo.*
 
 ## OS files
 .DS_Store
+
+## Render outputs
+backend/remotion_project/props/
+backend/final_vids/
+backend/remotion_jobs/

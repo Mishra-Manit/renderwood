@@ -1,0 +1,19 @@
+{
+  "name": "renderwood-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render GeneratedVideo out/video.mp4",
+    "compositions": "remotion compositions"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.419",
+    "@remotion/transitions": "4.0.419",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "4.0.419",
+    "zod": "4.3.6"
+  }
+}
