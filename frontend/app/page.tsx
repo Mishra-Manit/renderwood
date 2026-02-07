@@ -21,11 +21,7 @@ export default function Home() {
 
     document.addEventListener("click", handleClickOutside)
 
-    if (audioRef.current) {
-      audioRef.current.play().catch((error) => {
-        console.log("Autoplay prevented:", error)
-      })
-    }
+    audioRef.current?.play().catch(() => {})
 
     return () => {
       document.removeEventListener("click", handleClickOutside)

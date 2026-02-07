@@ -1,14 +1,11 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, VT323, Space_Mono, Playfair_Display } from "next/font/google"
+import { VT323, Space_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
 const vt323 = VT323({ weight: "400", subsets: ["latin"], variable: "--font-vt323" })
 const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-space-mono" })
-const playfairDisplay = Playfair_Display({ weight: "700", style: ["normal", "italic"], subsets: ["latin"], variable: "--font-playfair" })
 
 export const metadata: Metadata = {
   title: "RenderWood - AI Video Editor",
@@ -40,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased ${vt323.variable} ${spaceMono.variable} ${playfairDisplay.variable}`}>
+      <body className={`font-sans antialiased ${vt323.variable} ${spaceMono.variable}`}>
         {children}
         <Analytics />
       </body>
