@@ -283,56 +283,65 @@ export default function Home() {
       <main className="main-container">
         <div className="window">
           <div className="window-header">
-            <span>📁 My Projects</span>
+            <span>Output - Video Preview</span>
             <div className="window-controls">
               <span>_</span>
               <span>□</span>
               <span>×</span>
             </div>
           </div>
-          <div className="project-grid">
-            <a
-              href="https://1ui.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-card"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <img src="/modern-ui-component-library-design-system.jpg" alt="1UI.dev" className="project-img" />
-              <div className="project-info">
-                <h3 className="project-title">1UI.dev</h3>
-                <div>
-                  <span className="tag">React</span>
-                  <span className="tag">UI Library</span>
-                  <span className="tag">Components</span>
+          <div className="menu-bar">
+            <span>File</span>
+            <span>Playback</span>
+            <span>View</span>
+            <span>Help</span>
+          </div>
+          <div className="video-viewer-area">
+            <div className="video-player-wrapper">
+              <div className="video-placeholder">
+                <div className="video-placeholder-icon">
+                  <img
+                    src="https://win98icons.alexmeub.com/icons/png/media_player_stream_sun-4.png"
+                    alt="Video"
+                    style={{ width: "64px", height: "64px", imageRendering: "pixelated" as const }}
+                  />
+                </div>
+                <p className="video-placeholder-text">
+                  Your generated video will appear here.
+                </p>
+                <p className="video-placeholder-hint">
+                  Enter a prompt above and click send to generate.
+                </p>
+              </div>
+            </div>
+            <div className="video-controls-bar">
+              <div className="video-controls-left">
+                <button className="video-ctrl-btn" aria-label="Play">&#9654;</button>
+                <button className="video-ctrl-btn" aria-label="Stop">&#9632;</button>
+                <span className="video-time-display">00:00 / 00:00</span>
+              </div>
+              <div className="video-progress">
+                <div className="video-progress-track">
+                  <div className="video-progress-fill"></div>
                 </div>
               </div>
-            </a>
-            <a
-              href="https://apichecker.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-card"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <img src="/api-testing-monitoring-dashboard-interface.jpg" alt="Apichecker.io" className="project-img" />
-              <div className="project-info">
-                <h3 className="project-title">Apichecker.io</h3>
-                <div>
-                  <span className="tag">API</span>
-                  <span className="tag">Testing</span>
-                  <span className="tag">Monitoring</span>
-                </div>
+              <div className="video-controls-right">
+                <button className="video-ctrl-btn" aria-label="Download">
+                  <img
+                    src="https://win98icons.alexmeub.com/icons/png/disk_drive_green-0.png"
+                    alt="Save"
+                    style={{ width: "16px", height: "16px", imageRendering: "pixelated" as const }}
+                  />
+                </button>
+                <button className="video-ctrl-btn" aria-label="Fullscreen">&#9634;</button>
               </div>
-            </a>
+            </div>
           </div>
           <div className="status-bar">
-            <span>2 items</span>
-            <span>Ready</span>
+            <span>No video loaded</span>
+            <span>RenderWood Player</span>
           </div>
         </div>
-
-
       </main>
 
       <div className="taskbar">
