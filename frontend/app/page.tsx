@@ -332,46 +332,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="window">
-          <div className="window-header">
-            <span>💡 About Me</span>
-            <div className="window-controls">
-              <span>_</span>
-              <span>□</span>
-              <span>×</span>
-            </div>
-          </div>
-          <div className="about-content">
-            <h2 className="about-title">Creative Professional</h2>
-            <p className="about-description">
-              I'm passionate about creating meaningful digital experiences that blend aesthetics with functionality.
-              With expertise in design and development, I bring ideas to life through clean code and thoughtful
-              interfaces.
-            </p>
-            <div className="skills-grid">
-              <div className="skill-card">
-                <h3 className="skill-title">🎨 Design</h3>
-                <p className="skill-description">
-                  Crafting beautiful, user-centered interfaces with attention to detail.
-                </p>
-              </div>
-              <div className="skill-card">
-                <h3 className="skill-title">⚡ Development</h3>
-                <p className="skill-description">
-                  Building responsive, performant web applications with modern technologies.
-                </p>
-              </div>
-              <div className="skill-card">
-                <h3 className="skill-title">Creativity</h3>
-                <p className="skill-description">Bringing fresh ideas and innovative solutions to every project.</p>
-              </div>
-            </div>
-          </div>
-          <div className="status-bar">
-            <span>Page 1 of 1</span>
-            <span>100%</span>
-          </div>
-        </div>
+
       </main>
 
       <div className="taskbar">
