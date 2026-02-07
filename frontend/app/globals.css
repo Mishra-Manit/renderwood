@@ -261,28 +261,121 @@ header {
   position: relative;
 }
 
-.hero-content {
-  padding: 40px;
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 40px;
+.ai-prompt-area {
+  padding: 30px 24px;
   background: white;
   margin: 4px;
   border: 2px inset var(--win-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
 }
 
-.profile-frame {
-  border: 4px solid var(--xp-blue);
-  padding: 10px;
-  background: rgb(255, 255, 255);
-  box-shadow: 8px 8px 0px var(--xp-blue-dark);
-}
-
-.profile-img {
+.ai-prompt-box {
   width: 100%;
-  height: 400px;
-  object-fit: cover;
-  filter: sepia(0.3) contrast(1.1);
+  max-width: 860px;
+  background: var(--win-gray);
+  border: 2px solid var(--win-shadow);
+  border-top-color: var(--win-dark-shadow);
+  border-left-color: var(--win-dark-shadow);
+  border-bottom-color: var(--win-white);
+  border-right-color: var(--win-white);
+  padding: 12px 14px 8px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-prompt-input {
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid var(--win-shadow);
+  border-top-color: var(--win-dark-shadow);
+  border-left-color: var(--win-dark-shadow);
+  border-bottom-color: var(--win-white);
+  border-right-color: var(--win-white);
+  padding: 10px 12px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 14px;
+  color: var(--text-dark);
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+}
+
+.ai-prompt-input::placeholder {
+  color: var(--win-shadow);
+}
+
+.ai-prompt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ai-prompt-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-toolbar-btn {
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  padding: 3px 10px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--text-dark);
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-toolbar-btn:active {
+  border-color: var(--win-dark-shadow) var(--win-white) var(--win-white) var(--win-dark-shadow);
+}
+
+.ai-toolbar-btn-accent {
+  background: #d5ecd5;
+  color: #1a6b1a;
+}
+
+.ai-bolt-icon {
+  color: #21a121;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.ai-prompt-send-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-send-btn {
+  width: 30px;
+  height: 30px;
+  background: var(--xp-blue);
+  color: white;
+  border: 2px solid;
+  border-color: #3580ff var(--xp-blue-dark) var(--xp-blue-dark) #3580ff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.ai-send-btn:active {
+  border-color: var(--xp-blue-dark) #3580ff #3580ff var(--xp-blue-dark);
 }
 
 h1 {
@@ -721,38 +814,31 @@ h1 {
     margin: 0 10px;
   }
 
-  .hero-content {
-    grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 20px;
+  .ai-prompt-area {
+    padding: 16px 12px;
+    min-height: 140px;
   }
 
-  .profile-frame {
-    max-width: 300px;
-    margin: 0 auto;
+  .ai-prompt-box {
+    padding: 10px;
   }
 
-  .profile-img {
-    height: 300px;
+  .ai-prompt-input {
+    font-size: 13px;
+  }
+
+  .ai-prompt-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ai-prompt-actions {
+    flex-wrap: wrap;
   }
 
   h1 {
     font-size: 2.5rem;
     text-align: center;
-  }
-
-  .hero-description {
-    font-size: 1rem;
-    margin: 15px 0;
-    line-height: 1.6;
-    text-align: center;
-  }
-
-  .tag-container {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    justify-content: center;
   }
 
   .main-container {
@@ -886,9 +972,8 @@ h1 {
     width: 100%;
   }
 
-  .hero-content {
-    gap: 30px;
-    padding: 30px;
+  .ai-prompt-area {
+    padding: 24px 20px;
   }
 
   .project-grid {
@@ -951,18 +1036,6 @@ h1 {
     font-size: 1rem;
   }
 
-  .hero-description {
-    font-size: 1.2rem;
-    margin: 20px 0;
-    line-height: 1.6;
-  }
-
-  .tag-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
   .taskbar-time {
     display: flex;
     align-items: center;
@@ -981,19 +1054,5 @@ h1 {
 
   .start-text {
     display: inline;
-  }
-}
-
-@media (min-width: 1025px) {
-  .hero-description {
-    font-size: 1.2rem;
-    margin: 20px 0;
-    line-height: 1.6;
-  }
-
-  .tag-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
   }
 }

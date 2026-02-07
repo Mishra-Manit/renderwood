@@ -11,8 +11,8 @@ const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"], varia
 const playfairDisplay = Playfair_Display({ weight: "700", style: ["normal", "italic"], subsets: ["latin"], variable: "--font-playfair" })
 
 export const metadata: Metadata = {
-  title: "1UI AI UI Generator - Retro Windows XP Style",
-  description: "AI-powered UI generator with nostalgic Windows XP aesthetics and spring theme",
+  title: "RenderWood - AI Video Editor",
+  description: "AI-powered promptable video editor with nostalgic Windows XP aesthetics",
   generator: "v0.app",
   icons: {
     icon: [

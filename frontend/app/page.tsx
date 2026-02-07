@@ -8,6 +8,7 @@ export default function Home() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [openWindow, setOpenWindow] = useState<WindowType>(null)
   const [isMuted, setIsMuted] = useState(false)
+  const [prompt, setPrompt] = useState("")
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
@@ -234,7 +235,7 @@ export default function Home() {
       <header>
         <div className="window hero-window">
           <div className="window-header">
-            <span>Creative Portfolio - Spring Edition</span>
+            <span>RenderWood - Video Editor</span>
             <div className="window-controls">
               <span>_</span>
               <span>□</span>
@@ -247,34 +248,34 @@ export default function Home() {
             <span>View</span>
             <span>Help</span>
           </div>
-          <div className="hero-content">
-            <div className="profile-frame">
-              <img src="/images/profile-pixelated.png" alt="Jessin Sam S" className="profile-img" />
-            </div>
-            <div>
-              <h1 className="hero-title">
-                Jessin Sam S
-                <br />
-                Creative Portfolio
-              </h1>
-              <p className="hero-description">
-                Welcome to my creative space! I'm a designer and developer who loves crafting beautiful digital
-                experiences. Explore my work, skills, and projects below.
-              </p>
-              <div className="tag-container">
-                <span className="tag">Design</span>
-                <span className="tag">Development</span>
-                <span className="tag">Creative</span>
-                <span className="tag">Innovation</span>
+          <div className="ai-prompt-area">
+            <div className="ai-prompt-box">
+              <textarea
+                className="ai-prompt-input"
+                placeholder="Describe your video scene or edit..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={3}
+              />
+              <div className="ai-prompt-toolbar">
+                <div className="ai-prompt-actions">
+                  <button className="ai-toolbar-btn" aria-label="Attach file">+</button>
+                  <button className="ai-toolbar-btn ai-toolbar-btn-accent">
+                    <span className="ai-bolt-icon">&#9889;</span> Inspiration
+                  </button>
+                  <button className="ai-toolbar-btn">RenderWood v1</button>
+                </div>
+                <div className="ai-prompt-send-group">
+                  <button className="ai-send-btn" aria-label="Submit prompt">
+                    &#8593;
+                  </button>
+                </div>
               </div>
-              <a href="https://jess.vc" target="_blank" rel="noopener noreferrer">
-                <button className="button-retro">View My Work →</button>
-              </a>
             </div>
           </div>
           <div className="status-bar">
-            <span>Last Updated: Feb 2026</span>
-            <span className="blink">Welcome to Spring!</span>
+            <span>Ready</span>
+            <span className="blink">RenderWood</span>
           </div>
         </div>
       </header>
