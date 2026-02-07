@@ -95,7 +95,8 @@ def _build_agent_options(job_dir: Path) -> ClaudeAgentOptions:
     """Build agent configuration options."""
     return ClaudeAgentOptions(
         system_prompt=REMOTION_AGENT_SYSTEM_PROMPT,
-        allowed_tools=["Read", "Write", "Edit", "Bash", "Glob", "Grep"],
+        setting_sources=["user", "project"],
+        allowed_tools=["Skill", "Read", "Write", "Edit", "Bash", "Glob", "Grep"],
         cwd=str(job_dir),
         permission_mode="bypassPermissions",
         max_turns=30,

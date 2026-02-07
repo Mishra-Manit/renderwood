@@ -1,15 +1,13 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 
 type WindowType = "computer" | "documents" | "recycle" | null
 
 export default function Home() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [openWindow, setOpenWindow] = useState<WindowType>(null)
-  const [isMuted, setIsMuted] = useState(false)
   const [prompt, setPrompt] = useState("")
-  const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -21,19 +19,10 @@ export default function Home() {
 
     document.addEventListener("click", handleClickOutside)
 
-    audioRef.current?.play().catch(() => {})
-
     return () => {
       document.removeEventListener("click", handleClickOutside)
     }
   }, [])
-
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !audioRef.current.muted
-      setIsMuted(!isMuted)
-    }
-  }
 
   const openWindowHandler = (windowType: WindowType) => {
     setOpenWindow(windowType)
@@ -45,10 +34,6 @@ export default function Home() {
 
   return (
     <>
-      <audio ref={audioRef} loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
-      </audio>
-
       <div className="desktop-icons">
         <button onClick={() => openWindowHandler("computer")} className="icon-item">
           <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png" alt="Computer" />
@@ -390,17 +375,6 @@ export default function Home() {
         )}
 
         <div className="taskbar-time">
-          <img
-            src={
-              isMuted
-                ? "https://win98icons.alexmeub.com/icons/png/loudspeaker_muted-0.png"
-                : "https://win98icons.alexmeub.com/icons/png/loudspeaker_rays-0.png"
-            }
-            alt="Volume"
-            className="taskbar-icon"
-            onClick={toggleMute}
-            style={{ cursor: "pointer" }}
-          />
           <span className="time-text">12:00 PM</span>
         </div>
       </div>
