@@ -1,11 +1,10 @@
 """Video creation routes for Remotion agent rendering."""
 
-from uuid import uuid4
-
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from app.agent import orchestrator
+from app.agent.job_ids import next_job_id
 from app.api.schemas import VideoCreateRequest, VideoCreateResponse
 from app.config import settings
 
@@ -15,7 +14,7 @@ router = APIRouter(tags=["videos"])
 @router.post("/videos/create", response_model=VideoCreateResponse)
 async def create_video(request: VideoCreateRequest):
     """Render a Remotion video from a prompt."""
-    job_id = uuid4().hex[:12]
+    job_id = next_job_id(settings.remotion_jobs_path)
     try:
         result = await orchestrator.run(job_id, request.prompt)
     except Exception as exc:
