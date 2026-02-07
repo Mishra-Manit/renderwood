@@ -37,15 +37,17 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Windows 95 + Spring theme variables */
-  --win-gray: #c0c0c0;
+  /* Windows XP + Spring theme variables */
+  --win-gray: #ece9d8;
   --win-white: #ffffff;
-  --win-shadow: #808080;
-  --win-dark-shadow: #404040;
-  --spring-pink: #d4728c;
-  --spring-green: #3a7d44;
-  --spring-yellow: #e8b931;
-  --text-dark: #2c3e2c;
+  --win-shadow: #aca899;
+  --win-dark-shadow: #716f64;
+  --xp-blue: #0054e3;
+  --xp-blue-dark: #0344b3;
+  --xp-green: #3c8a3f;
+  --xp-green-start: #21a121;
+  --xp-silver: #d6d2c2;
+  --text-dark: #1a1a1a;
 }
 
 .dark {
@@ -133,19 +135,19 @@
   }
 }
 
-/* Windows 95 + Spring theme styles */
+/* Windows XP + Spring theme styles */
 
 * {
   box-sizing: border-box;
-  cursor: url("https://cur.cursors-4u.net/nature/nat-6/nat582.cur"), auto !important;
 }
 
 body {
   padding: 0px;
-  background-color: #e8f5e9;
-  background-image: radial-gradient(circle, rgba(200, 230, 201, 0.9) 0%, #c8e6c9 50%, #a5d6a7 100%);
+  background-color: #3a6ea5;
+  background-image: url("/images/bliss-bg.jpg");
   background-attachment: fixed;
   background-size: cover;
+  background-position: center;
   font-family: var(--font-space-mono), monospace;
   color: var(--text-dark);
   overflow-x: hidden;
@@ -155,17 +157,16 @@ body {
 
 .window {
   background: var(--win-gray);
-  border-width: 2px;
-  border-style: solid;
-  border-image: initial;
-  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
-  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 0px;
+  border: 1px solid var(--win-dark-shadow);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
   margin-bottom: 30px;
+  overflow: hidden;
 }
 
 .window-header {
-  background: linear-gradient(90deg, var(--spring-green), #2e6b35);
-  padding: 4px 8px;
+  background: linear-gradient(180deg, #0997ff, #0054e3 8%, #0054e3 40%, #0344b3 88%, #003cad 93%, #003299 95%, #0050d7 100%);
+  padding: 6px 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -173,22 +174,45 @@ body {
   font-weight: bold;
   font-family: var(--font-vt323), monospace;
   font-size: 1.2rem;
+  border-radius: 8px 8px 0 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
 }
 
 .window-controls span {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background: var(--win-gray);
-  border-width: 1px;
-  border-style: solid;
-  border-image: initial;
-  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
-  margin-left: 2px;
-  text-align: center;
-  line-height: 14px;
-  color: black;
-  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 21px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.window-controls span:nth-child(1) {
+  background: linear-gradient(180deg, #3c8dea, #2663c0);
+  border: 1px solid #1a4fa0;
+}
+
+.window-controls span:nth-child(2) {
+  background: linear-gradient(180deg, #3c8dea, #2663c0);
+  border: 1px solid #1a4fa0;
+}
+
+.window-controls span:nth-child(3) {
+  background: linear-gradient(180deg, #e8a07a, #c5694a);
+  border: 1px solid #a84830;
+}
+
+.window-controls span:hover {
+  filter: brightness(1.15);
 }
 
 header {
@@ -214,10 +238,9 @@ header {
   text-decoration: none;
   font-size: 12px;
   width: 80px;
-  text-shadow: black 2px 2px 0px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 4px rgba(0, 0, 0, 0.4);
   text-align: center;
   word-wrap: break-word;
-  /* Converted icon-item to button style */
   background: transparent;
   border: none;
   padding: 5px;
@@ -252,10 +275,10 @@ header {
 }
 
 .profile-frame {
-  border: 4px solid var(--spring-yellow);
+  border: 4px solid var(--xp-blue);
   padding: 10px;
   background: rgb(255, 255, 255);
-  box-shadow: 10px 10px 0px var(--spring-green);
+  box-shadow: 8px 8px 0px var(--xp-blue-dark);
 }
 
 .profile-img {
@@ -269,7 +292,7 @@ h1 {
   font-family: var(--font-playfair), serif;
   font-size: 3.5rem;
   margin: 0px;
-  color: var(--spring-green);
+  color: var(--xp-blue);
   font-style: italic;
 }
 
@@ -297,7 +320,7 @@ h1 {
 
 .project-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--spring-yellow);
+  box-shadow: 6px 6px 0px var(--xp-blue);
 }
 
 .project-img {
@@ -317,44 +340,50 @@ h1 {
   bottom: 0px;
   left: 0px;
   width: 100%;
-  height: 40px;
-  background: var(--win-gray);
-  border-top: 2px solid var(--win-white);
+  height: 36px;
+  background: linear-gradient(180deg, #1f6cf5 0%, #1359d7 3%, #1359d7 95%, #0e47b2 100%);
+  border-top: 1px solid #3580ff;
   display: flex;
   align-items: center;
-  padding: 0px 10px;
+  padding: 0px 4px;
   z-index: 1000;
-  /* Added to ensure proper taskbar rendering */
   box-sizing: border-box;
 }
 
 .start-btn {
-  background: var(--win-gray);
-  border-width: 2px;
-  border-style: solid;
-  border-image: initial;
-  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
-  padding: 2px 10px;
+  background: linear-gradient(180deg, #3faa3e 0%, #32993a 3%, #2d8f34 50%, #21a121 100%);
+  border: 1px solid #1a7a1a;
+  border-radius: 0 8px 8px 0;
+  padding: 3px 14px 3px 6px;
   font-weight: bold;
   display: flex;
   align-items: center;
   gap: 5px;
   margin-right: 10px;
+  color: white;
+  font-style: italic;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+}
+
+.start-btn:hover {
+  background: linear-gradient(180deg, #4ebb4d 0%, #3fa948 3%, #37a03e 50%, #2bb92b 100%);
 }
 
 .start-btn:active {
-  border-color: var(--win-dark-shadow) var(--win-white) var(--win-white) var(--win-dark-shadow);
+  background: linear-gradient(180deg, #2d8f34 0%, #21a121 50%, #1a7a1a 100%);
 }
 
-/* Added taskbar-time styling for better layout */
 .taskbar-time {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 10px;
-  border-left: 2px solid var(--win-shadow);
+  padding: 0 12px;
+  background: linear-gradient(180deg, #0f6aea, #0854ca);
+  border-left: 1px solid #1070f0;
   margin-left: auto;
   height: 100%;
+  color: white;
 }
 
 .taskbar-icon {
@@ -366,23 +395,25 @@ h1 {
 .time-text {
   font-size: 12px;
   white-space: nowrap;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-/* Added Start menu styles */
 .start-menu {
   position: fixed;
-  bottom: 40px;
+  bottom: 36px;
   left: 0;
-  width: 250px;
-  background: var(--win-gray);
-  border: 2px solid;
-  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  width: 280px;
+  background: #ffffff;
+  border: 2px solid var(--xp-blue);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.4);
   z-index: 1001;
+  overflow: hidden;
 }
 
 .start-menu-header {
-  background: linear-gradient(90deg, var(--spring-green), #2e6b35);
+  background: linear-gradient(180deg, #1f6cf5, var(--xp-blue));
   padding: 15px 10px;
   display: flex;
   flex-direction: column;
@@ -427,7 +458,7 @@ h1 {
 }
 
 .start-menu-item:hover {
-  background: var(--spring-green);
+  background: var(--xp-blue);
   color: white;
 }
 
@@ -444,74 +475,6 @@ h1 {
   border-bottom: 1px solid var(--win-white);
 }
 
-.vines {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(90deg, var(--spring-green), #66bb6a, var(--spring-yellow), #81c784, var(--spring-pink), var(--spring-green));
-  background-size: 300% 100%;
-  animation: vine-shimmer 8s ease-in-out infinite;
-  z-index: 1001;
-  box-shadow: 0 2px 8px rgba(58, 125, 68, 0.3);
-}
-
-@keyframes vine-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-.petal {
-  color: #f8bbd0;
-  font-size: 1.2em;
-  font-family: Arial;
-  text-shadow: 0 0 3px rgba(244, 143, 177, 0.5);
-  position: fixed;
-  top: -10%;
-  z-index: 9999;
-  user-select: none;
-  cursor: default;
-  animation-name: petals-fall, petals-sway;
-  animation-duration: 12s, 4s;
-  animation-timing-function: ease-in, ease-in-out;
-  animation-iteration-count: infinite, infinite;
-  animation-play-state: running, running;
-  opacity: 0.85;
-}
-
-@keyframes petals-fall {
-  0% {
-    top: -10%;
-    opacity: 0.85;
-  }
-  80% {
-    opacity: 0.85;
-  }
-  100% {
-    top: 100%;
-    opacity: 0;
-  }
-}
-
-@keyframes petals-sway {
-  0% {
-    transform: translateX(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateX(50px) rotate(90deg);
-  }
-  50% {
-    transform: translateX(100px) rotate(180deg);
-  }
-  75% {
-    transform: translateX(50px) rotate(270deg);
-  }
-  100% {
-    transform: translateX(0px) rotate(360deg);
-  }
-}
-
 .menu-bar {
   display: flex;
   gap: 20px;
@@ -523,7 +486,7 @@ h1 {
 /* Removed underline styling from menu-bar span as we're using <u> tags now */
 .menu-bar span u {
   text-decoration: underline;
-  text-decoration-color: var(--spring-green);
+  text-decoration-color: var(--xp-blue);
 }
 
 .blink {
@@ -555,7 +518,7 @@ h1 {
 
 .tag {
   display: inline-block;
-  background: var(--spring-green);
+  background: var(--xp-blue);
   color: white;
   padding: 2px 8px;
   font-size: 10px;
@@ -611,7 +574,7 @@ h1 {
 }
 
 .drive-item:hover {
-  background: var(--spring-green);
+  background: var(--xp-blue);
   color: white;
 }
 
@@ -652,7 +615,7 @@ h1 {
 }
 
 .folder-item:hover {
-  background: var(--spring-green);
+  background: var(--xp-blue);
   color: white;
 }
 
@@ -693,7 +656,7 @@ h1 {
 
 .about-title {
   font-family: var(--font-playfair), serif;
-  color: var(--spring-green);
+  color: var(--xp-blue);
   margin: 0 0 20px 0;
   font-size: 2.5rem;
   font-weight: 700;
@@ -723,14 +686,14 @@ h1 {
 
 .skill-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--spring-green);
+  box-shadow: 4px 4px 0 var(--xp-blue);
 }
 
 .skill-title {
   margin: 0 0 15px 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--spring-green);
+  color: var(--xp-blue);
 }
 
 .skill-description {
@@ -825,7 +788,7 @@ h1 {
 
   .about-title {
     font-family: var(--font-playfair), serif;
-    color: var(--spring-green);
+    color: var(--xp-blue);
     margin: 0 0 15px 0;
     font-size: 1.8rem;
   }
@@ -853,7 +816,7 @@ h1 {
   .skill-title {
     margin: 0 0 10px 0;
     font-size: 1.1rem;
-    color: var(--spring-green);
+    color: var(--xp-blue);
     font-weight: 700;
   }
 
@@ -949,7 +912,7 @@ h1 {
 
   .about-title {
     font-family: var(--font-playfair), serif;
-    color: var(--spring-green);
+    color: var(--xp-blue);
     margin: 0 0 20px 0;
     font-size: 2.2rem;
   }
@@ -976,7 +939,7 @@ h1 {
   .skill-title {
     margin: 0 0 12px 0;
     font-size: 1.2rem;
-    color: var(--spring-green);
+    color: var(--xp-blue);
     font-weight: 700;
   }
 
