@@ -1,0 +1,1022 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  /* Added Windows 95 and Christmas theme variables */
+  --win-gray: #c0c0c0;
+  --win-white: #ffffff;
+  --win-shadow: #808080;
+  --win-dark-shadow: #404040;
+  --xmas-red: #d42426;
+  --xmas-green: #165b33;
+  --xmas-gold: #ffd700;
+  --text-dark: #222;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.145 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.439 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Added complete Windows 95 and Christmas theme styles */
+
+* {
+  box-sizing: border-box;
+  cursor: url("https://cur.cursors-4u.net/holiday/hol-4/hol352.cur"), auto !important;
+}
+
+body {
+  padding: 0px;
+  background-color: rgb(13, 43, 26);
+  background-image: radial-gradient(circle, rgba(22, 91, 51, 0.8) 0%, rgb(13, 43, 26) 100%),
+    url("https://images.unsplash.com/photo-1482517967863-00e15c9b44be?auto=format&fit=crop&w=1920&q=80");
+  background-attachment: fixed;
+  background-size: cover;
+  font-family: var(--font-space-mono), monospace;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  width: 1200px;
+  margin: 0px auto;
+}
+
+.window {
+  background: var(--win-gray);
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 0px;
+  margin-bottom: 30px;
+}
+
+.window-header {
+  background: linear-gradient(90deg, var(--xmas-red), #8b0000);
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  font-family: var(--font-vt323), monospace;
+  font-size: 1.2rem;
+}
+
+.window-controls span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: var(--win-gray);
+  border-width: 1px;
+  border-style: solid;
+  border-image: initial;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  margin-left: 2px;
+  text-align: center;
+  line-height: 14px;
+  color: black;
+  font-size: 12px;
+}
+
+header {
+  padding: 40px 0px;
+  text-align: center;
+}
+
+.desktop-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: fixed;
+  left: 20px;
+  top: 100px;
+  z-index: 10;
+}
+
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  width: 80px;
+  text-shadow: black 2px 2px 0px;
+  text-align: center;
+  word-wrap: break-word;
+  /* Converted icon-item to button style */
+  background: transparent;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.icon-item:focus {
+  outline: 1px dotted white;
+}
+
+.icon-item img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 5px;
+  image-rendering: pixelated;
+}
+
+.hero-window {
+  width: 1000px;
+  margin: 0px auto;
+  position: relative;
+}
+
+.hero-content {
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 40px;
+  background: white;
+  margin: 4px;
+  border: 2px inset var(--win-gray);
+}
+
+.profile-frame {
+  border: 4px solid var(--xmas-gold);
+  padding: 10px;
+  background: rgb(255, 255, 255);
+  box-shadow: 10px 10px 0px var(--xmas-green);
+}
+
+.profile-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  filter: sepia(0.3) contrast(1.1);
+}
+
+h1 {
+  font-family: var(--font-playfair), serif;
+  font-size: 3.5rem;
+  margin: 0px;
+  color: var(--xmas-red);
+  font-style: italic;
+}
+
+.status-bar {
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-shadow);
+  padding: 5px 15px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.project-card {
+  background: var(--win-gray);
+  padding: 4px;
+  transition: transform 0.2s;
+}
+
+.project-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--xmas-gold);
+}
+
+.project-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border: 2px inset var(--win-gray);
+}
+
+.project-info {
+  padding: 10px;
+  border-top: 1px solid var(--win-shadow);
+}
+
+.taskbar {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 40px;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-white);
+  display: flex;
+  align-items: center;
+  padding: 0px 10px;
+  z-index: 1000;
+  /* Added to ensure proper taskbar rendering */
+  box-sizing: border-box;
+}
+
+.start-btn {
+  background: var(--win-gray);
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  padding: 2px 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: 10px;
+}
+
+.start-btn:active {
+  border-color: var(--win-dark-shadow) var(--win-white) var(--win-white) var(--win-dark-shadow);
+}
+
+/* Added taskbar-time styling for better layout */
+.taskbar-time {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  border-left: 2px solid var(--win-shadow);
+  margin-left: auto;
+  height: 100%;
+}
+
+.taskbar-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+.time-text {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Added Start menu styles */
+.start-menu {
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  width: 250px;
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+
+.start-menu-header {
+  background: linear-gradient(90deg, var(--xmas-red), #8b0000);
+  padding: 15px 10px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 2px solid var(--win-shadow);
+}
+
+.windows-logo {
+  font-family: var(--font-vt323), monospace;
+  font-size: 32px;
+  color: white;
+  font-weight: bold;
+  line-height: 1;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.windows-version {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
+}
+
+.start-menu-items {
+  padding: 4px 0;
+}
+
+.start-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 8px 15px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.1s;
+  /* Added button styles for start menu items */
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.start-menu-item:hover {
+  background: var(--xmas-red);
+  color: white;
+}
+
+.start-menu-item img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.start-menu-separator {
+  height: 2px;
+  background: var(--win-shadow);
+  margin: 4px 8px;
+  border-bottom: 1px solid var(--win-white);
+}
+
+.lights {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 40px;
+  background: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf?auto=format&fit=crop&w=1200&q=80") 0% 0% /
+    contain repeat-x;
+  z-index: 1001;
+  filter: drop-shadow(0 0 5px var(--xmas-gold));
+}
+
+.snowflake {
+  color: rgb(255, 255, 255);
+  font-size: 1em;
+  font-family: Arial;
+  text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+  position: fixed;
+  top: -10%;
+  z-index: 9999;
+  user-select: none;
+  cursor: default;
+  animation-name: snowflakes-fall, snowflakes-shake;
+  animation-duration: 10s, 3s;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-play-state: running, running;
+}
+
+@keyframes snowflakes-fall {
+  0% {
+    top: -10%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+@keyframes snowflakes-shake {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(80px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.menu-bar {
+  display: flex;
+  gap: 20px;
+  padding: 5px 20px;
+  border-bottom: 1px solid var(--win-shadow);
+  font-size: 14px;
+}
+
+/* Removed underline styling from menu-bar span as we're using <u> tags now */
+.menu-bar span u {
+  text-decoration: underline;
+  text-decoration-color: var(--xmas-red);
+}
+
+.blink {
+  animation: 1s linear 0s infinite normal none running blinker;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.button-retro {
+  background: var(--win-gray);
+  border-width: 2px;
+  border-style: solid;
+  border-image: initial;
+  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
+  padding: 8px 20px;
+  font-family: var(--font-space-mono), monospace;
+  font-weight: bold;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.button-retro:active {
+  border-color: var(--win-dark-shadow) var(--win-white) var(--win-white) var(--win-dark-shadow);
+}
+
+.tag {
+  display: inline-block;
+  background: var(--xmas-green);
+  color: white;
+  padding: 2px 8px;
+  font-size: 10px;
+  margin-right: 5px;
+  text-transform: uppercase;
+}
+
+/* Added mobile responsive styles */
+
+/* Added modal and window content styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-window {
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+.window-content {
+  background: white;
+  padding: 20px;
+  margin: 4px;
+  border: 2px inset var(--win-gray);
+  min-height: 300px;
+}
+
+.computer-drives {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.drive-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  background: var(--win-gray);
+  border: 1px solid var(--win-shadow);
+  cursor: pointer;
+}
+
+.drive-item:hover {
+  background: var(--xmas-red);
+  color: white;
+}
+
+.drive-item img {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.drive-label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.drive-name {
+  font-size: 12px;
+  color: var(--win-shadow);
+}
+
+.drive-item:hover .drive-name {
+  color: white;
+}
+
+.folder-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+}
+
+.folder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.folder-item:hover {
+  background: var(--xmas-red);
+  color: white;
+}
+
+.folder-item img {
+  width: 48px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+.folder-item span {
+  font-size: 12px;
+  word-wrap: break-word;
+  max-width: 100px;
+}
+
+.recycle-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 250px;
+  text-align: center;
+}
+
+.recycle-empty p {
+  font-size: 14px;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.about-content {
+  padding: 30px 40px;
+  background: white;
+  margin: 4px;
+  border: 2px inset var(--win-gray);
+}
+
+.about-title {
+  font-family: var(--font-playfair), serif;
+  color: var(--xmas-red);
+  margin: 0 0 20px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.about-description {
+  line-height: 1.8;
+  margin-bottom: 30px;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.skill-card {
+  padding: 25px;
+  background: var(--win-gray);
+  border: 2px outset var(--win-white);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.skill-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--xmas-green);
+}
+
+.skill-title {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--xmas-red);
+}
+
+.skill-description {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 768px) {
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .desktop-icons {
+    display: none;
+  }
+
+  .window-controls {
+    display: none;
+  }
+
+  .hero-window {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 20px;
+  }
+
+  .profile-frame {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .profile-img {
+    height: 300px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+    margin: 15px 0;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .tag-container {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .main-container {
+    max-width: 100%;
+    padding: 0 10px;
+    margin: 0;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .project-img {
+    height: 180px;
+  }
+
+  .project-title {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+  }
+
+  .about-content {
+    padding: 20px;
+    background: white;
+    margin: 4px;
+    border: 2px inset var(--win-gray);
+  }
+
+  .about-title {
+    font-family: var(--font-playfair), serif;
+    color: var(--xmas-red);
+    margin: 0 0 15px 0;
+    font-size: 1.8rem;
+  }
+
+  .about-description {
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .skill-card {
+    padding: 15px;
+    background: var(--win-gray);
+    border: 2px outset var(--win-white);
+  }
+
+  /* Improved mobile skill card title styling */
+  .skill-title {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: var(--xmas-red);
+    font-weight: 700;
+  }
+
+  .skill-description {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  .window-header {
+    font-size: 1rem;
+  }
+
+  .menu-bar {
+    font-size: 12px;
+    gap: 10px;
+    padding: 5px 10px;
+  }
+
+  .status-bar {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  .start-text {
+    display: none;
+  }
+
+  /* Added mobile-specific Start menu styles */
+  .start-menu {
+    width: calc(100% - 20px);
+    left: 10px;
+    right: 10px;
+  }
+
+  .start-menu-item {
+    font-size: 16px;
+    padding: 12px 15px;
+  }
+
+  .taskbar-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 5px;
+    border-left: 1px solid var(--win-shadow);
+  }
+
+  .taskbar-icon {
+    width: 16px;
+  }
+
+  .time-text {
+    font-size: 10px;
+  }
+
+  .button-retro {
+    width: 100%;
+    margin-top: 15px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .hero-window {
+    width: 100%;
+  }
+
+  .hero-content {
+    gap: 30px;
+    padding: 30px;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .main-container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .about-content {
+    padding: 30px;
+    background: white;
+    margin: 4px;
+    border: 2px inset var(--win-gray);
+  }
+
+  .about-title {
+    font-family: var(--font-playfair), serif;
+    color: var(--xmas-red);
+    margin: 0 0 20px 0;
+    font-size: 2.2rem;
+  }
+
+  .about-description {
+    line-height: 1.8;
+    margin-bottom: 25px;
+    font-size: 1rem;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .skill-card {
+    padding: 20px;
+    background: var(--win-gray);
+    border: 2px outset var(--win-white);
+  }
+
+  .skill-title {
+    margin: 0 0 12px 0;
+    font-size: 1.2rem;
+    color: var(--xmas-red);
+    font-weight: 700;
+  }
+
+  .skill-description {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .project-title {
+    margin: 0 0 10px 0;
+    font-size: 1rem;
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+    margin: 20px 0;
+    line-height: 1.6;
+  }
+
+  .tag-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .taskbar-time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+    border-left: 1px solid var(--win-shadow);
+  }
+
+  .taskbar-icon {
+    width: 16px;
+  }
+
+  .time-text {
+    font-size: 12px;
+  }
+
+  .start-text {
+    display: inline;
+  }
+}
+
+@media (min-width: 1025px) {
+  .hero-description {
+    font-size: 1.2rem;
+    margin: 20px 0;
+    line-height: 1.6;
+  }
+
+  .tag-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
