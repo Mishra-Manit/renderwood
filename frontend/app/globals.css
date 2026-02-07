@@ -37,15 +37,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Added Windows 95 and Christmas theme variables */
+  /* Windows 95 + Spring theme variables */
   --win-gray: #c0c0c0;
   --win-white: #ffffff;
   --win-shadow: #808080;
   --win-dark-shadow: #404040;
-  --xmas-red: #d42426;
-  --xmas-green: #165b33;
-  --xmas-gold: #ffd700;
-  --text-dark: #222;
+  --spring-pink: #d4728c;
+  --spring-green: #3a7d44;
+  --spring-yellow: #e8b931;
+  --text-dark: #2c3e2c;
 }
 
 .dark {
@@ -133,18 +133,17 @@
   }
 }
 
-/* Added complete Windows 95 and Christmas theme styles */
+/* Windows 95 + Spring theme styles */
 
 * {
   box-sizing: border-box;
-  cursor: url("https://cur.cursors-4u.net/holiday/hol-4/hol352.cur"), auto !important;
+  cursor: url("https://cur.cursors-4u.net/nature/nat-6/nat582.cur"), auto !important;
 }
 
 body {
   padding: 0px;
-  background-color: rgb(13, 43, 26);
-  background-image: radial-gradient(circle, rgba(22, 91, 51, 0.8) 0%, rgb(13, 43, 26) 100%),
-    url("https://images.unsplash.com/photo-1482517967863-00e15c9b44be?auto=format&fit=crop&w=1920&q=80");
+  background-color: #e8f5e9;
+  background-image: radial-gradient(circle, rgba(200, 230, 201, 0.9) 0%, #c8e6c9 50%, #a5d6a7 100%);
   background-attachment: fixed;
   background-size: cover;
   font-family: var(--font-space-mono), monospace;
@@ -165,7 +164,7 @@ body {
 }
 
 .window-header {
-  background: linear-gradient(90deg, var(--xmas-red), #8b0000);
+  background: linear-gradient(90deg, var(--spring-green), #2e6b35);
   padding: 4px 8px;
   display: flex;
   justify-content: space-between;
@@ -253,10 +252,10 @@ header {
 }
 
 .profile-frame {
-  border: 4px solid var(--xmas-gold);
+  border: 4px solid var(--spring-yellow);
   padding: 10px;
   background: rgb(255, 255, 255);
-  box-shadow: 10px 10px 0px var(--xmas-green);
+  box-shadow: 10px 10px 0px var(--spring-green);
 }
 
 .profile-img {
@@ -270,7 +269,7 @@ h1 {
   font-family: var(--font-playfair), serif;
   font-size: 3.5rem;
   margin: 0px;
-  color: var(--xmas-red);
+  color: var(--spring-green);
   font-style: italic;
 }
 
@@ -298,7 +297,7 @@ h1 {
 
 .project-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px var(--xmas-gold);
+  box-shadow: 6px 6px 0px var(--spring-yellow);
 }
 
 .project-img {
@@ -383,7 +382,7 @@ h1 {
 }
 
 .start-menu-header {
-  background: linear-gradient(90deg, var(--xmas-red), #8b0000);
+  background: linear-gradient(90deg, var(--spring-green), #2e6b35);
   padding: 15px 10px;
   display: flex;
   flex-direction: column;
@@ -428,7 +427,7 @@ h1 {
 }
 
 .start-menu-item:hover {
-  background: var(--xmas-red);
+  background: var(--spring-green);
   color: white;
 }
 
@@ -445,53 +444,71 @@ h1 {
   border-bottom: 1px solid var(--win-white);
 }
 
-.lights {
+.vines {
   position: fixed;
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 40px;
-  background: url("https://images.unsplash.com/photo-1543589077-47d81606c1bf?auto=format&fit=crop&w=1200&q=80") 0% 0% /
-    contain repeat-x;
+  height: 8px;
+  background: linear-gradient(90deg, var(--spring-green), #66bb6a, var(--spring-yellow), #81c784, var(--spring-pink), var(--spring-green));
+  background-size: 300% 100%;
+  animation: vine-shimmer 8s ease-in-out infinite;
   z-index: 1001;
-  filter: drop-shadow(0 0 5px var(--xmas-gold));
+  box-shadow: 0 2px 8px rgba(58, 125, 68, 0.3);
 }
 
-.snowflake {
-  color: rgb(255, 255, 255);
-  font-size: 1em;
+@keyframes vine-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.petal {
+  color: #f8bbd0;
+  font-size: 1.2em;
   font-family: Arial;
-  text-shadow: rgb(0, 0, 0) 0px 0px 1px;
+  text-shadow: 0 0 3px rgba(244, 143, 177, 0.5);
   position: fixed;
   top: -10%;
   z-index: 9999;
   user-select: none;
   cursor: default;
-  animation-name: snowflakes-fall, snowflakes-shake;
-  animation-duration: 10s, 3s;
-  animation-timing-function: linear, ease-in-out;
+  animation-name: petals-fall, petals-sway;
+  animation-duration: 12s, 4s;
+  animation-timing-function: ease-in, ease-in-out;
   animation-iteration-count: infinite, infinite;
   animation-play-state: running, running;
+  opacity: 0.85;
 }
 
-@keyframes snowflakes-fall {
+@keyframes petals-fall {
   0% {
     top: -10%;
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.85;
   }
   100% {
     top: 100%;
+    opacity: 0;
   }
 }
 
-@keyframes snowflakes-shake {
+@keyframes petals-sway {
   0% {
-    transform: translateX(0px);
+    transform: translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(50px) rotate(90deg);
   }
   50% {
-    transform: translateX(80px);
+    transform: translateX(100px) rotate(180deg);
+  }
+  75% {
+    transform: translateX(50px) rotate(270deg);
   }
   100% {
-    transform: translateX(0px);
+    transform: translateX(0px) rotate(360deg);
   }
 }
 
@@ -506,7 +523,7 @@ h1 {
 /* Removed underline styling from menu-bar span as we're using <u> tags now */
 .menu-bar span u {
   text-decoration: underline;
-  text-decoration-color: var(--xmas-red);
+  text-decoration-color: var(--spring-green);
 }
 
 .blink {
@@ -538,7 +555,7 @@ h1 {
 
 .tag {
   display: inline-block;
-  background: var(--xmas-green);
+  background: var(--spring-green);
   color: white;
   padding: 2px 8px;
   font-size: 10px;
@@ -594,7 +611,7 @@ h1 {
 }
 
 .drive-item:hover {
-  background: var(--xmas-red);
+  background: var(--spring-green);
   color: white;
 }
 
@@ -635,7 +652,7 @@ h1 {
 }
 
 .folder-item:hover {
-  background: var(--xmas-red);
+  background: var(--spring-green);
   color: white;
 }
 
@@ -676,7 +693,7 @@ h1 {
 
 .about-title {
   font-family: var(--font-playfair), serif;
-  color: var(--xmas-red);
+  color: var(--spring-green);
   margin: 0 0 20px 0;
   font-size: 2.5rem;
   font-weight: 700;
@@ -706,14 +723,14 @@ h1 {
 
 .skill-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 4px 4px 0 var(--xmas-green);
+  box-shadow: 4px 4px 0 var(--spring-green);
 }
 
 .skill-title {
   margin: 0 0 15px 0;
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--xmas-red);
+  color: var(--spring-green);
 }
 
 .skill-description {
@@ -808,7 +825,7 @@ h1 {
 
   .about-title {
     font-family: var(--font-playfair), serif;
-    color: var(--xmas-red);
+    color: var(--spring-green);
     margin: 0 0 15px 0;
     font-size: 1.8rem;
   }
@@ -836,7 +853,7 @@ h1 {
   .skill-title {
     margin: 0 0 10px 0;
     font-size: 1.1rem;
-    color: var(--xmas-red);
+    color: var(--spring-green);
     font-weight: 700;
   }
 
@@ -932,7 +949,7 @@ h1 {
 
   .about-title {
     font-family: var(--font-playfair), serif;
-    color: var(--xmas-red);
+    color: var(--spring-green);
     margin: 0 0 20px 0;
     font-size: 2.2rem;
   }
@@ -959,7 +976,7 @@ h1 {
   .skill-title {
     margin: 0 0 12px 0;
     font-size: 1.2rem;
-    color: var(--xmas-red);
+    color: var(--spring-green);
     font-weight: 700;
   }
 

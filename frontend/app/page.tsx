@@ -11,19 +11,21 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
-    const createSnowflakes = () => {
-      const snowflakeCount = 50
-      for (let i = 0; i < snowflakeCount; i++) {
-        const snowflake = document.createElement("div")
-        snowflake.className = "snowflake"
-        snowflake.textContent = "❅"
-        snowflake.style.left = Math.random() * 100 + "%"
-        snowflake.style.animationDelay = Math.random() * 10 + "s"
-        snowflake.style.animationDuration = Math.random() * 5 + 5 + "s"
-        document.body.appendChild(snowflake)
+    const createPetals = () => {
+      const petalCount = 35
+      const petalChars = ["\u{1F338}", "\u{1F33C}", "\u{1F33A}"]
+      for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement("div")
+        petal.className = "petal"
+        petal.textContent = petalChars[Math.floor(Math.random() * petalChars.length)]
+        petal.style.left = Math.random() * 100 + "%"
+        petal.style.animationDelay = Math.random() * 12 + "s"
+        petal.style.animationDuration = Math.random() * 6 + 8 + "s"
+        petal.style.fontSize = Math.random() * 0.8 + 0.8 + "em"
+        document.body.appendChild(petal)
       }
     }
-    createSnowflakes()
+    createPetals()
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
@@ -41,7 +43,7 @@ export default function Home() {
     }
 
     return () => {
-      document.querySelectorAll(".snowflake").forEach((el) => el.remove())
+      document.querySelectorAll(".petal").forEach((el) => el.remove())
       document.removeEventListener("click", handleClickOutside)
     }
   }, [])
@@ -69,7 +71,7 @@ export default function Home() {
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
       </audio>
 
-      <div className="lights"></div>
+      <div className="vines"></div>
 
       <div className="desktop-icons">
         <button onClick={() => openWindowHandler("computer")} className="icon-item">
@@ -253,7 +255,7 @@ export default function Home() {
       <header>
         <div className="window hero-window">
           <div className="window-header">
-            <span>🎄 Creative Portfolio - Merry Christmas! 🎅</span>
+            <span>{'🌸 Creative Portfolio - Spring Edition 🌿'}</span>
             <div className="window-controls">
               <span>_</span>
               <span>□</span>
@@ -292,8 +294,8 @@ export default function Home() {
             </div>
           </div>
           <div className="status-bar">
-            <span>⏰ Last Updated: Dec 2025</span>
-            <span className="blink">🎄 Ho Ho Ho! 🎅</span>
+            <span>{'🌱 Last Updated: Feb 2026'}</span>
+            <span className="blink">{'🌷 Hello Spring! 🌻'}</span>
           </div>
         </div>
       </header>
@@ -380,7 +382,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="skill-card">
-                <h3 className="skill-title">🎄 Creativity</h3>
+                <h3 className="skill-title">{'🌼 Creativity'}</h3>
                 <p className="skill-description">Bringing fresh ideas and innovative solutions to every project.</p>
               </div>
             </div>
@@ -453,7 +455,7 @@ export default function Home() {
             onClick={toggleMute}
             style={{ cursor: "pointer" }}
           />
-          <span className="time-text">🎄 12:00 PM</span>
+          <span className="time-text">{'🌸 12:00 PM'}</span>
         </div>
       </div>
     </>
