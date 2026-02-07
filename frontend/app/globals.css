@@ -223,8 +223,9 @@ header {
   gap: 20px;
   position: fixed;
   left: 20px;
-  top: 100px;
-  z-index: 10;
+  top: 20px;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .icon-item {
@@ -262,14 +263,14 @@ header {
 }
 
 .ai-prompt-area {
-  padding: 30px 24px;
+  padding: 40px 24px;
   background: white;
   margin: 4px;
   border: 2px inset var(--win-gray);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: 320px;
 }
 
 .ai-prompt-box {

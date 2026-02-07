@@ -255,7 +255,7 @@ export default function Home() {
                 placeholder="Describe your video scene or edit..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                rows={3}
+                rows={8}
               />
               <div className="ai-prompt-toolbar">
                 <div className="ai-prompt-actions">
