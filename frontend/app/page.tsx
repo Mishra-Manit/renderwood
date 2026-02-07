@@ -8,23 +8,10 @@ export default function Home() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [openWindow, setOpenWindow] = useState<WindowType>(null)
   const [isMuted, setIsMuted] = useState(false)
+  const [prompt, setPrompt] = useState("")
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
-    const createSnowflakes = () => {
-      const snowflakeCount = 50
-      for (let i = 0; i < snowflakeCount; i++) {
-        const snowflake = document.createElement("div")
-        snowflake.className = "snowflake"
-        snowflake.textContent = "❅"
-        snowflake.style.left = Math.random() * 100 + "%"
-        snowflake.style.animationDelay = Math.random() * 10 + "s"
-        snowflake.style.animationDuration = Math.random() * 5 + 5 + "s"
-        document.body.appendChild(snowflake)
-      }
-    }
-    createSnowflakes()
-
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement
       if (!target.closest(".start-btn") && !target.closest(".start-menu")) {
@@ -34,14 +21,9 @@ export default function Home() {
 
     document.addEventListener("click", handleClickOutside)
 
-    if (audioRef.current) {
-      audioRef.current.play().catch((error) => {
-        console.log("Autoplay prevented:", error)
-      })
-    }
+    audioRef.current?.play().catch(() => {})
 
     return () => {
-      document.querySelectorAll(".snowflake").forEach((el) => el.remove())
       document.removeEventListener("click", handleClickOutside)
     }
   }, [])
@@ -54,12 +36,10 @@ export default function Home() {
   }
 
   const openWindowHandler = (windowType: WindowType) => {
-    console.log("[v0] Opening window:", windowType)
     setOpenWindow(windowType)
   }
 
   const closeWindowHandler = () => {
-    console.log("[v0] Closing window")
     setOpenWindow(null)
   }
 
@@ -68,8 +48,6 @@ export default function Home() {
       <audio ref={audioRef} loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
       </audio>
-
-      <div className="lights"></div>
 
       <div className="desktop-icons">
         <button onClick={() => openWindowHandler("computer")} className="icon-item">
@@ -253,7 +231,7 @@ export default function Home() {
       <header>
         <div className="window hero-window">
           <div className="window-header">
-            <span>🎄 Creative Portfolio - Merry Christmas! 🎅</span>
+            <span>RenderWood - Video Editor</span>
             <div className="window-controls">
               <span>_</span>
               <span>□</span>
@@ -266,34 +244,34 @@ export default function Home() {
             <span>View</span>
             <span>Help</span>
           </div>
-          <div className="hero-content">
-            <div className="profile-frame">
-              <img src="/images/profile-pixelated.png" alt="Jessin Sam S" className="profile-img" />
-            </div>
-            <div>
-              <h1 className="hero-title">
-                Jessin Sam S
-                <br />
-                Creative Portfolio
-              </h1>
-              <p className="hero-description">
-                Welcome to my creative space! I'm a designer and developer who loves crafting beautiful digital
-                experiences. Explore my work, skills, and projects below.
-              </p>
-              <div className="tag-container">
-                <span className="tag">Design</span>
-                <span className="tag">Development</span>
-                <span className="tag">Creative</span>
-                <span className="tag">Innovation</span>
+          <div className="ai-prompt-area">
+            <div className="ai-prompt-box">
+              <textarea
+                className="ai-prompt-input"
+                placeholder="Describe your video scene or edit..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                rows={8}
+              />
+              <div className="ai-prompt-toolbar">
+                <div className="ai-prompt-actions">
+                  <button className="ai-toolbar-btn" aria-label="Attach file">+</button>
+                  <button className="ai-toolbar-btn ai-toolbar-btn-accent">
+                    <span className="ai-bolt-icon">&#9889;</span> Inspiration
+                  </button>
+                  <button className="ai-toolbar-btn">RenderWood v1</button>
+                </div>
+                <div className="ai-prompt-send-group">
+                  <button className="ai-send-btn" aria-label="Submit prompt">
+                    &#8593;
+                  </button>
+                </div>
               </div>
-              <a href="https://jess.vc" target="_blank" rel="noopener noreferrer">
-                <button className="button-retro">View My Work →</button>
-              </a>
             </div>
           </div>
           <div className="status-bar">
-            <span>⏰ Last Updated: Dec 2025</span>
-            <span className="blink">🎄 Ho Ho Ho! 🎅</span>
+            <span>Ready</span>
+            <span className="blink">RenderWood</span>
           </div>
         </div>
       </header>
@@ -301,93 +279,63 @@ export default function Home() {
       <main className="main-container">
         <div className="window">
           <div className="window-header">
-            <span>📁 My Projects</span>
+            <span>Output - Video Preview</span>
             <div className="window-controls">
               <span>_</span>
               <span>□</span>
               <span>×</span>
             </div>
           </div>
-          <div className="project-grid">
-            <a
-              href="https://1ui.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-card"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <img src="/modern-ui-component-library-design-system.jpg" alt="1UI.dev" className="project-img" />
-              <div className="project-info">
-                <h3 className="project-title">1UI.dev</h3>
-                <div>
-                  <span className="tag">React</span>
-                  <span className="tag">UI Library</span>
-                  <span className="tag">Components</span>
-                </div>
-              </div>
-            </a>
-            <a
-              href="https://apichecker.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-card"
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <img src="/api-testing-monitoring-dashboard-interface.jpg" alt="Apichecker.io" className="project-img" />
-              <div className="project-info">
-                <h3 className="project-title">Apichecker.io</h3>
-                <div>
-                  <span className="tag">API</span>
-                  <span className="tag">Testing</span>
-                  <span className="tag">Monitoring</span>
-                </div>
-              </div>
-            </a>
+          <div className="menu-bar">
+            <span>File</span>
+            <span>Playback</span>
+            <span>View</span>
+            <span>Help</span>
           </div>
-          <div className="status-bar">
-            <span>2 items</span>
-            <span>Ready</span>
-          </div>
-        </div>
-
-        <div className="window">
-          <div className="window-header">
-            <span>💡 About Me</span>
-            <div className="window-controls">
-              <span>_</span>
-              <span>□</span>
-              <span>×</span>
+          <div className="video-viewer-area">
+            <div className="video-player-wrapper">
+              <div className="video-placeholder">
+                <div className="video-placeholder-icon">
+                  <img
+                    src="https://win98icons.alexmeub.com/icons/png/media_player_stream_sun-4.png"
+                    alt="Video"
+                    style={{ width: "64px", height: "64px", imageRendering: "pixelated" as const }}
+                  />
+                </div>
+                <p className="video-placeholder-text">
+                  Your generated video will appear here.
+                </p>
+                <p className="video-placeholder-hint">
+                  Enter a prompt above and click send to generate.
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="about-content">
-            <h2 className="about-title">Creative Professional</h2>
-            <p className="about-description">
-              I'm passionate about creating meaningful digital experiences that blend aesthetics with functionality.
-              With expertise in design and development, I bring ideas to life through clean code and thoughtful
-              interfaces.
-            </p>
-            <div className="skills-grid">
-              <div className="skill-card">
-                <h3 className="skill-title">🎨 Design</h3>
-                <p className="skill-description">
-                  Crafting beautiful, user-centered interfaces with attention to detail.
-                </p>
+            <div className="video-controls-bar">
+              <div className="video-controls-left">
+                <button className="video-ctrl-btn" aria-label="Play">&#9654;</button>
+                <button className="video-ctrl-btn" aria-label="Stop">&#9632;</button>
+                <span className="video-time-display">00:00 / 00:00</span>
               </div>
-              <div className="skill-card">
-                <h3 className="skill-title">⚡ Development</h3>
-                <p className="skill-description">
-                  Building responsive, performant web applications with modern technologies.
-                </p>
+              <div className="video-progress">
+                <div className="video-progress-track">
+                  <div className="video-progress-fill"></div>
+                </div>
               </div>
-              <div className="skill-card">
-                <h3 className="skill-title">🎄 Creativity</h3>
-                <p className="skill-description">Bringing fresh ideas and innovative solutions to every project.</p>
+              <div className="video-controls-right">
+                <button className="video-ctrl-btn" aria-label="Download">
+                  <img
+                    src="https://win98icons.alexmeub.com/icons/png/disk_drive_green-0.png"
+                    alt="Save"
+                    style={{ width: "16px", height: "16px", imageRendering: "pixelated" as const }}
+                  />
+                </button>
+                <button className="video-ctrl-btn" aria-label="Fullscreen">&#9634;</button>
               </div>
             </div>
           </div>
           <div className="status-bar">
-            <span>Page 1 of 1</span>
-            <span>100%</span>
+            <span>No video loaded</span>
+            <span>RenderWood Player</span>
           </div>
         </div>
       </main>
@@ -453,7 +401,7 @@ export default function Home() {
             onClick={toggleMute}
             style={{ cursor: "pointer" }}
           />
-          <span className="time-text">🎄 12:00 PM</span>
+          <span className="time-text">12:00 PM</span>
         </div>
       </div>
     </>
