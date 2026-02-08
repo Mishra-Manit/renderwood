@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { createVideo, listUploads, uploadFile, deleteUpload, getUploadUrl } from "../lib/api"
+import { createVideo, listUploads, uploadFile, deleteUpload, getUploadUrl, getVideoUrl } from "../lib/api"
 import type { UploadedFile } from "../lib/api"
 
 type WindowType = "computer" | "documents" | "recycle" | null
@@ -15,7 +15,12 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [documents, setDocuments] = useState<UploadedFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
   const lastSubmittedPromptRef = useRef<string | null>(null)
   const requestControllerRef = useRef<AbortController | null>(null)
 
@@ -127,6 +132,8 @@ export default function Home() {
       if (result.status === "failed") {
         setSubmitError(result.error ?? "Video request failed.")
         lastSubmittedPromptRef.current = null
+      } else if (result.job_id) {
+        setVideoUrl(getVideoUrl(result.job_id))
       }
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
@@ -141,7 +148,39 @@ export default function Home() {
     }
   }, [])
 
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, "0")
+    const s = Math.floor(seconds % 60).toString().padStart(2, "0")
+    return `${m}:${s}`
+  }
+
+  const handlePlayPause = () => {
+    const video = videoRef.current
+    if (!video) return
+    if (video.paused) {
+      video.play()
+    } else {
+      video.pause()
+    }
+  }
+
+  const handleStop = () => {
+    const video = videoRef.current
+    if (!video) return
+    video.pause()
+    video.currentTime = 0
+  }
+
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const video = videoRef.current
+    if (!video || !duration) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    video.currentTime = ratio * duration
+  }
+
   const statusLabel = submitError ? "Error sending prompt" : isSubmitting ? "Submitting..." : "Ready"
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
     <>
@@ -426,47 +465,63 @@ export default function Home() {
           </div>
           <div className="video-viewer-area">
             <div className="video-player-wrapper">
-              <div className="video-placeholder">
-                <div className="video-placeholder-icon">
-                  <img
-                    src="https://win98icons.alexmeub.com/icons/png/media_player_stream_sun-4.png"
-                    alt="Video"
-                    style={{ width: "64px", height: "64px", imageRendering: "pixelated" as const }}
-                  />
+              {videoUrl ? (
+                <video
+                  ref={videoRef}
+                  src={videoUrl}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+                  onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+                  onEnded={() => setIsPlaying(false)}
+                />
+              ) : (
+                <div className="video-placeholder">
+                  <div className="video-placeholder-icon">
+                    <img
+                      src="https://win98icons.alexmeub.com/icons/png/media_player_stream_sun-4.png"
+                      alt="Video"
+                      style={{ width: "64px", height: "64px", imageRendering: "pixelated" as const }}
+                    />
+                  </div>
+                  <p className="video-placeholder-text">
+                    Your generated video will appear here.
+                  </p>
+                  <p className="video-placeholder-hint">
+                    Enter a prompt above and click send to generate.
+                  </p>
                 </div>
-                <p className="video-placeholder-text">
-                  Your generated video will appear here.
-                </p>
-                <p className="video-placeholder-hint">
-                  Enter a prompt above and click send to generate.
-                </p>
-              </div>
+              )}
             </div>
             <div className="video-controls-bar">
               <div className="video-controls-left">
-                <button className="video-ctrl-btn" aria-label="Play">&#9654;</button>
-                <button className="video-ctrl-btn" aria-label="Stop">&#9632;</button>
-                <span className="video-time-display">00:00 / 00:00</span>
+                <button className="video-ctrl-btn" aria-label={isPlaying ? "Pause" : "Play"} onClick={handlePlayPause} disabled={!videoUrl}>
+                  {isPlaying ? "\u275A\u275A" : "\u25B6"}
+                </button>
+                <button className="video-ctrl-btn" aria-label="Stop" onClick={handleStop} disabled={!videoUrl}>&#9632;</button>
+                <span className="video-time-display">{formatTime(currentTime)} / {formatTime(duration)}</span>
               </div>
               <div className="video-progress">
-                <div className="video-progress-track">
-                  <div className="video-progress-fill"></div>
+                <div className="video-progress-track" onClick={handleProgressClick} style={{ cursor: videoUrl ? "pointer" : "default" }}>
+                  <div className="video-progress-fill" style={{ width: `${progressPercent}%` }}></div>
                 </div>
               </div>
               <div className="video-controls-right">
-                <button className="video-ctrl-btn" aria-label="Download">
-                  <img
-                    src="https://win98icons.alexmeub.com/icons/png/disk_drive_green-0.png"
-                    alt="Save"
-                    style={{ width: "16px", height: "16px", imageRendering: "pixelated" as const }}
-                  />
-                </button>
-                <button className="video-ctrl-btn" aria-label="Fullscreen">&#9634;</button>
+                {videoUrl && (
+                  <a href={videoUrl} download className="video-ctrl-btn" aria-label="Download" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
+                    <img
+                      src="https://win98icons.alexmeub.com/icons/png/disk_drive_green-0.png"
+                      alt="Save"
+                      style={{ width: "16px", height: "16px", imageRendering: "pixelated" as const }}
+                    />
+                  </a>
+                )}
+                <button className="video-ctrl-btn" aria-label="Fullscreen" onClick={() => videoRef.current?.requestFullscreen()} disabled={!videoUrl}>&#9634;</button>
               </div>
             </div>
           </div>
           <div className="status-bar">
-            <span>No video loaded</span>
+            <span>{videoUrl ? (isPlaying ? "Playing" : "Video loaded") : "No video loaded"}</span>
             <span>RenderWood Player</span>
           </div>
         </div>

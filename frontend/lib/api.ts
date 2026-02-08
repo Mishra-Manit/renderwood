@@ -69,3 +69,7 @@ export async function deleteUpload(filename: string): Promise<void> {
 export function getUploadUrl(filename: string): string {
   return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`
 }
+
+export function getVideoUrl(jobId: string): string {
+  return `${API_BASE_URL}/api/jobs/${encodeURIComponent(jobId)}/video`
+}
