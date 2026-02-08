@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     # Anthropic
     anthropic_api_key: str = ""
 
+    # Fireworks (prompt enhancement)
+    fireworks_api_key: str = ""
+    fireworks_model: str = "accounts/fireworks/models/kimi-k2p5"
+
     # Environment
     environment: str = "development"
 

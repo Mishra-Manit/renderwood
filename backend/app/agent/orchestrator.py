@@ -17,6 +17,7 @@ from claude_agent_sdk import (
 )
 
 from app.agent.observability import configure_observability, get_logfire
+from app.agent.prompt_enhancer import enhance_prompt
 from app.agent.prompts import REMOTION_AGENT_SYSTEM_PROMPT
 from app.config import settings
 
@@ -37,22 +38,25 @@ async def run(job_id: str, prompt: str) -> dict[str, str]:
     ):
         job_dir, output_dir = _setup_job_directory(job_id)
 
-        agent_prompt = _build_agent_prompt(prompt)
+        enhanced_prompt = await enhance_prompt(prompt)
+        agent_prompt = _build_agent_prompt(enhanced_prompt)
 
         options = _build_agent_options(job_dir)
 
-        output_path = await _run_agent(agent_prompt, options, output_dir)
+        job_output_path = await _run_agent(agent_prompt, options, output_dir)
 
-        _validate_output(output_path)
+        _validate_output(job_output_path)
+
+        final_output_path = copy_output_to_final(job_output_path, job_id)
 
         logfire.info(
             "video_generation_complete",
             job_id=job_id,
-            output_path=str(output_path),
+            output_path=str(final_output_path),
         )
 
         return {
-            "output_path": str(output_path),
+            "output_path": str(final_output_path),
             "job_project_path": str(job_dir),
         }
 
@@ -122,7 +126,7 @@ async def _run_agent(
                     _log_assistant_message(message, turn_count)
 
                 elif isinstance(message, ResultMessage):
-                    _handle_result_message(message, turn_count)
+                    _handle_result_message(message, turn_count, output_dir)
                     break
 
         return output_dir / "video.mp4"
@@ -163,15 +167,29 @@ def _log_assistant_message(message: AssistantMessage, turn_count: int) -> None:
                 )
 
 
-def _handle_result_message(message: ResultMessage, turn_count: int) -> None:
+def _handle_result_message(
+    message: ResultMessage, turn_count: int, output_dir: Path
+) -> None:
     """Handle the final result message from the agent."""
     if message.is_error:
+        video_exists = (output_dir / "video.mp4").exists()
         logfire.error(
             "agent_execution_failed",
             error=message.result,
             turn_count=turn_count,
+            video_already_rendered=video_exists,
         )
-        raise RuntimeError(f"Agent failed: {message.result}")
+        # If the video was already rendered before the error, treat as a
+        # warning rather than a hard failure. The agent may have hit an
+        # auth/quota error on a final summary turn after rendering.
+        if not video_exists:
+            raise RuntimeError(f"Agent failed: {message.result}")
+        logfire.warn(
+            "agent_error_after_render",
+            message="Agent reported an error but the video was already rendered. Continuing.",
+            error=message.result,
+        )
+        return
 
     logfire.info(
         "agent_execution_complete",
@@ -190,3 +208,12 @@ def _validate_output(output_path: Path) -> None:
         raise FileNotFoundError(
             f"Agent did not produce output at {output_path}"
         )
+
+
+def copy_output_to_final(output_path: Path, job_id: str) -> Path:
+    """Copy the job output video into the final output directory."""
+    final_dir = settings.output_dir
+    final_dir.mkdir(parents=True, exist_ok=True)
+    final_path = final_dir / f"{job_id}.mp4"
+    shutil.copy2(output_path, final_path)
+    return final_path

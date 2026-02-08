@@ -1,20 +1,19 @@
-"""Observability configuration for Claude Agent SDK using Logfire.
-
-This module provides centralized configuration for tracing and monitoring
-Claude Agent SDK operations using Pydantic Logfire and OpenTelemetry.
-"""
+"""Logfire observability setup for Claude Agent SDK."""
 
 from __future__ import annotations
 
-import os
 import json
-from typing import TYPE_CHECKING, Any
+import os
+from typing import Any
 
-if TYPE_CHECKING:
-    import logfire as LogfireType
+from app.config import settings
+import logfire  # type: ignore[import-not-found]
+from langsmith.integrations.claude_agent_sdk import (  # type: ignore[import-not-found]
+    _client as ls_client,
+    configure_claude_agent_sdk,
+)
 
-# Environment variables for OpenTelemetry integration
-# These configure LangSmith to send traces to Logfire via OpenTelemetry
+
 _OTEL_ENV_VARS = {
     "LANGSMITH_OTEL_ENABLED": "true",
     "LANGSMITH_OTEL_ONLY": "true",
@@ -29,43 +28,13 @@ def configure_observability(
     console: bool = True,
     otel_only: bool = True,
 ) -> Any:
-    """Configure Logfire observability for Claude Agent SDK.
-
-    This function sets up comprehensive tracing for Claude Agent SDK operations,
-    including all LLM calls, tool executions, and agent interactions.
-
-    Args:
-        service_name: Name of the service for trace identification
-        environment: Environment name (e.g., "production", "development")
-        console: Whether to also log to console (default: True)
-
-    Returns:
-        Configured Logfire instance
-
-    Example:
-        >>> from app.agent.observability import configure_observability
-        >>> logfire = configure_observability(
-        ...     service_name="my-agent",
-        ...     environment="production"
-        ... )
-    """
-    try:
-        import logfire
-        from langsmith.integrations.claude_agent_sdk import configure_claude_agent_sdk
-    except ImportError as e:
-        raise ImportError(
-            "Missing required packages for observability. "
-            "Install with: pip install logfire 'langsmith[claude-agent-sdk,otel]'"
-        ) from e
-
-    # Set OpenTelemetry environment variables
+    """Configure Logfire observability for the agent."""
     for key, value in _OTEL_ENV_VARS.items():
         if key == "LANGSMITH_OTEL_ONLY":
             os.environ[key] = "true" if otel_only else "false"
         else:
             os.environ[key] = value
 
-    # Configure Logfire
     logfire.configure(
         service_name=service_name,
         environment=environment,
@@ -77,7 +46,7 @@ def configure_observability(
         else False,
     )
 
-    # Instrument Claude Agent SDK with OpenTelemetry
+    logfire.instrument_pydantic_ai()
     configure_claude_agent_sdk()
     _patch_langsmith_usage_metadata()
 
@@ -85,38 +54,15 @@ def configure_observability(
 
 
 def get_logfire() -> Any:
-    """Get the configured Logfire instance.
+    """Return a configured Logfire instance."""
+    if not getattr(logfire, "is_configured", lambda: False)():  # pragma: no cover
+        return configure_observability(environment=settings.environment)
 
-    This is a convenience function to import logfire after configuration.
-
-    Returns:
-        Configured Logfire instance
-
-    Raises:
-        RuntimeError: If logfire is not installed or not configured
-
-    Example:
-        >>> from app.agent.observability import get_logfire
-        >>> logfire = get_logfire()
-        >>> logfire.info("Agent started", job_id="abc123")
-    """
-    try:
-        import logfire
-
-        return logfire
-    except ImportError as e:
-        raise RuntimeError(
-            "Logfire not installed. Install with: pip install logfire"
-        ) from e
+    return logfire
 
 
 def _patch_langsmith_usage_metadata() -> None:
     """Flatten usage metadata to OpenTelemetry-safe attributes."""
-    try:
-        from langsmith.integrations.claude_agent_sdk import _client as ls_client
-    except ImportError:
-        return
-
     if getattr(ls_client.TurnLifecycle, "_renderwood_usage_patched", False):
         return
 

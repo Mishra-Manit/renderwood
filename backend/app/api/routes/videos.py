@@ -35,7 +35,7 @@ async def create_video(request: VideoCreateRequest):
 @router.get("/jobs/{job_id}/video")
 async def download_video(job_id: str):
     """Download the rendered video file."""
-    video_path = settings.remotion_jobs_path / job_id / "output" / "video.mp4"
+    video_path = settings.output_dir / f"{job_id}.mp4"
     if not video_path.exists():
         raise HTTPException(status_code=404, detail="Video not found")
     return FileResponse(video_path)
