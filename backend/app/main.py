@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import videos
+from app.api.routes import uploads, videos
 from app.config import settings
 
 
@@ -13,6 +13,7 @@ from app.config import settings
 async def lifespan(app: FastAPI):
     settings.output_dir.mkdir(parents=True, exist_ok=True)
     settings.remotion_jobs_path.mkdir(parents=True, exist_ok=True)
+    settings.upload_dir.mkdir(parents=True, exist_ok=True)
     props_dir = settings.remotion_project_path / "props"
     props_dir.mkdir(parents=True, exist_ok=True)
     yield
@@ -34,6 +35,7 @@ app.add_middleware(
 )
 
 app.include_router(videos.router, prefix="/api")
+app.include_router(uploads.router, prefix="/api")
 
 
 @app.get("/health")

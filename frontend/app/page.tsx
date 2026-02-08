@@ -1,6 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+
+import { createVideo, listUploads, uploadFile, deleteUpload, getUploadUrl } from "../lib/api"
+import type { UploadedFile } from "../lib/api"
 
 type WindowType = "computer" | "documents" | "recycle" | null
 
@@ -8,6 +11,59 @@ export default function Home() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false)
   const [openWindow, setOpenWindow] = useState<WindowType>(null)
   const [prompt, setPrompt] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [documents, setDocuments] = useState<UploadedFile[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const lastSubmittedPromptRef = useRef<string | null>(null)
+  const requestControllerRef = useRef<AbortController | null>(null)
+
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const files = await listUploads()
+      setDocuments(files)
+    } catch {
+      // silently ignore — folder may be empty or backend down
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchDocuments()
+  }, [fetchDocuments])
+
+  const handleFileUpload = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files
+      if (!files || files.length === 0) return
+      setIsUploading(true)
+      try {
+        for (const file of Array.from(files)) {
+          await uploadFile(file)
+        }
+        await fetchDocuments()
+      } catch {
+        // upload error — could show a message, but for now silently handle
+      } finally {
+        setIsUploading(false)
+        // reset the input so the same file can be re-selected
+        if (fileInputRef.current) fileInputRef.current.value = ""
+      }
+    },
+    [fetchDocuments],
+  )
+
+  const handleDeleteFile = useCallback(
+    async (filename: string) => {
+      try {
+        await deleteUpload(filename)
+        await fetchDocuments()
+      } catch {
+        // silently ignore
+      }
+    },
+    [fetchDocuments],
+  )
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -24,13 +80,68 @@ export default function Home() {
     }
   }, [])
 
+  const getFileIcon = (type: string, name: string): string => {
+    if (type.startsWith("image/")) return "https://win98icons.alexmeub.com/icons/png/paint_file-5.png"
+    if (type.startsWith("video/")) return "https://win98icons.alexmeub.com/icons/png/mplayer-2.png"
+    if (type.startsWith("audio/")) return "https://win98icons.alexmeub.com/icons/png/loudspeaker_rays-0.png"
+    if (type === "application/pdf") return "https://win98icons.alexmeub.com/icons/png/write_wordpad-0.png"
+    if (name.endsWith(".txt") || name.endsWith(".md")) return "https://win98icons.alexmeub.com/icons/png/notepad-2.png"
+    if (name.endsWith(".zip") || name.endsWith(".gz") || name.endsWith(".tar"))
+      return "https://win98icons.alexmeub.com/icons/png/compressed_file-0.png"
+    return "https://win98icons.alexmeub.com/icons/png/file_lines-0.png"
+  }
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  }
+
   const openWindowHandler = (windowType: WindowType) => {
+    if (windowType === "documents") {
+      fetchDocuments()
+    }
     setOpenWindow(windowType)
   }
 
   const closeWindowHandler = () => {
     setOpenWindow(null)
   }
+
+  const submitPrompt = useCallback(async (value: string) => {
+    const trimmed = value.trim()
+    if (!trimmed || trimmed === lastSubmittedPromptRef.current) {
+      return
+    }
+
+    lastSubmittedPromptRef.current = trimmed
+    requestControllerRef.current?.abort()
+    const controller = new AbortController()
+    requestControllerRef.current = controller
+
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const result = await createVideo(trimmed, controller.signal)
+      if (result.status === "failed") {
+        setSubmitError(result.error ?? "Video request failed.")
+        lastSubmittedPromptRef.current = null
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return
+      }
+      setSubmitError(error instanceof Error ? error.message : "Failed to send prompt.")
+      lastSubmittedPromptRef.current = null
+    } finally {
+      if (requestControllerRef.current === controller) {
+        setIsSubmitting(false)
+      }
+    }
+  }, [])
+
+  const statusLabel = submitError ? "Error sending prompt" : isSubmitting ? "Submitting..." : "Ready"
 
   return (
     <>
@@ -138,30 +249,33 @@ export default function Home() {
                 </div>
                 <div className="window-content">
                   <div className="folder-list">
-                    <a
-                      href="https://1ui.dev"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="folder-item"
-                      style={{ textDecoration: "none", color: "inherit", padding: "4px 8px" }}
-                    >
-                      <img src="https://win98icons.alexmeub.com/icons/png/html-0.png" alt="Project" />
-                      <span>1UI.dev</span>
-                    </a>
-                    <a
-                      href="https://apichecker.io"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="folder-item"
-                      style={{ textDecoration: "none", color: "inherit", padding: "4px 8px" }}
-                    >
-                      <img src="https://win98icons.alexmeub.com/icons/png/html-0.png" alt="Project" />
-                      <span>Apichecker.io</span>
-                    </a>
+                    {documents.length === 0 && !isUploading && (
+                      <div className="folder-empty-message">
+                        This folder is empty. Use the <strong>+</strong> button to upload files.
+                      </div>
+                    )}
+                    {isUploading && (
+                      <div className="folder-empty-message">
+                        Uploading...
+                      </div>
+                    )}
+                    {documents.map((doc) => (
+                      <a
+                        key={doc.name}
+                        href={getUploadUrl(doc.name)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="folder-item"
+                        title={`${doc.name} (${formatFileSize(doc.size)})`}
+                      >
+                        <img src={getFileIcon(doc.type, doc.name)} alt={doc.type} />
+                        <span>{doc.name}</span>
+                      </a>
+                    ))}
                   </div>
                 </div>
                 <div className="status-bar">
-                  <span>2 object(s)</span>
+                  <span>{documents.length} object(s)</span>
                   <span>My Documents</span>
                 </div>
               </div>
@@ -237,25 +351,58 @@ export default function Home() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={8}
+                aria-busy={isSubmitting}
               />
               <div className="ai-prompt-toolbar">
                 <div className="ai-prompt-actions">
-                  <button className="ai-toolbar-btn" aria-label="Attach file">+</button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    multiple
+                    style={{ display: "none" }}
+                  />
+                  <button
+                    className="ai-toolbar-btn"
+                    aria-label="Attach file"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? "..." : "+"}
+                  </button>
                   <button className="ai-toolbar-btn ai-toolbar-btn-accent">
                     <span className="ai-bolt-icon">&#9889;</span> Inspiration
                   </button>
                   <button className="ai-toolbar-btn">RenderWood v1</button>
                 </div>
                 <div className="ai-prompt-send-group">
-                  <button className="ai-send-btn" aria-label="Submit prompt">
-                    &#8593;
+                  <button
+                    className="ai-send-btn"
+                    aria-label={isSubmitting ? "Submitting prompt" : "Submit prompt"}
+                    onClick={() => submitPrompt(prompt)}
+                    disabled={isSubmitting || !prompt.trim()}
+                  >
+                    {isSubmitting ? (
+                      <span className="ai-send-loader" data-testid="send-loader" aria-hidden="true">
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                        <span className="ai-send-loader-dot" data-testid="send-loader-dot" />
+                      </span>
+                    ) : (
+                      <span aria-hidden="true">&#8593;</span>
+                    )}
                   </button>
                 </div>
               </div>
             </div>
           </div>
           <div className="status-bar">
-            <span>Ready</span>
+            <span>{statusLabel}</span>
             <span className="blink">RenderWood</span>
           </div>
         </div>
