@@ -134,7 +134,7 @@
 }
 
 body {
-  padding: 0px;
+  padding: 0;
   background-color: #3a6ea5 !important;
   background-image: url("/images/bliss-bg.jpg") !important;
   background-attachment: fixed;
@@ -143,8 +143,8 @@ body {
   font-family: var(--font-space-mono), monospace;
   color: var(--text-dark);
   overflow-x: hidden;
-  width: 1200px;
-  margin: 0px auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .window {
@@ -208,7 +208,7 @@ body {
 }
 
 header {
-  padding: 40px 0px;
+  padding: 40px 80px;
   text-align: center;
   position: relative;
   z-index: 2;
@@ -218,6 +218,8 @@ header {
   position: relative;
   z-index: 2;
   padding-bottom: 48px;
+  max-width: 1160px;
+  margin: 0 auto;
 }
 
 .desktop-icons {
@@ -260,8 +262,8 @@ header {
 }
 
 .hero-window {
-  width: 1000px;
-  margin: 0px auto;
+  max-width: 1000px;
+  margin: 0 auto;
   position: relative;
 }
 
@@ -323,7 +325,6 @@ header {
   display: flex;
   align-items: center;
   gap: 6px;
-  position: relative;
 }
 
 .ai-toolbar-btn {
@@ -365,15 +366,15 @@ header {
 /* ---- Video Style Selector ---- */
 
 .ai-style-selector {
-  position: static;
+  position: relative;
   display: inline-block;
 }
 
 .ai-style-menu {
   position: absolute;
   bottom: calc(100% + 4px);
-  left: auto;
-  right: 0;
+  left: 0;
+  right: auto;
   min-width: 150px;
   background: var(--win-gray);
   border: 2px solid;
@@ -672,15 +673,15 @@ header {
 
 .taskbar {
   position: fixed;
-  bottom: 0px;
-  left: 0px;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 36px;
   background: linear-gradient(180deg, #1f6cf5 0%, #1359d7 3%, #1359d7 95%, #0e47b2 100%);
   border-top: 1px solid #3580ff;
   display: flex;
   align-items: center;
-  padding: 0px 4px;
+  padding: 0 4px;
   z-index: 1000;
   box-sizing: border-box;
 }
@@ -1090,22 +1091,20 @@ header {
 /* Mobile responsive overrides */
 @media (max-width: 768px) {
   body {
-    width: 100%;
-    margin: 0;
     padding: 0;
   }
 
-  .desktop-icons {
-    display: none;
-  }
-
+  .desktop-icons,
   .window-controls {
     display: none;
   }
 
+  header {
+    padding: 12px 24px;
+  }
+
   .hero-window {
-    width: calc(100% - 20px);
-    margin: 0 10px;
+    max-width: none;
   }
 
   .ai-prompt-area {
@@ -1123,17 +1122,16 @@ header {
 
   .ai-prompt-toolbar {
     flex-wrap: wrap;
-    gap: 6px;
   }
 
   .ai-prompt-actions {
     flex-wrap: wrap;
+    gap: 4px;
   }
 
   .main-container {
-    max-width: 100%;
-    padding: 0 10px;
-    margin: 0;
+    max-width: none;
+    padding-bottom: 48px;
   }
 
   .video-controls-bar {
@@ -1190,59 +1188,96 @@ header {
   }
 
   .taskbar-time {
-    display: flex;
-    align-items: center;
     gap: 5px;
     padding: 0 5px;
-    border-left: 1px solid var(--win-shadow);
-  }
-
-  .taskbar-icon {
-    width: 16px;
   }
 
   .time-text {
     font-size: 10px;
   }
-
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   body {
-    width: 100%;
-    padding: 0 20px;
+    padding: 0 16px;
+  }
+
+  .desktop-icons {
+    display: none;
+  }
+
+  header {
+    padding: 20px 48px;
   }
 
   .hero-window {
-    width: 100%;
+    max-width: none;
   }
 
   .ai-prompt-area {
-    padding: 24px 20px;
+    padding: 20px 16px;
+    min-height: 200px;
+  }
+
+  .ai-prompt-box {
+    padding: 10px 12px 8px 12px;
+  }
+
+  .ai-prompt-input {
+    font-size: 13px;
+  }
+
+  .ai-prompt-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .ai-prompt-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .ai-toolbar-btn {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 
   .main-container {
-    max-width: 100%;
-    padding: 0;
+    max-width: none;
   }
 
-  .taskbar-time {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 10px;
-    border-left: 1px solid var(--win-shadow);
+  .video-controls-bar {
+    padding: 4px 8px;
+    gap: 6px;
   }
 
-  .taskbar-icon {
-    width: 16px;
+  .video-ctrl-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
   }
 
-  .time-text {
+  .video-time-display {
+    font-size: 10px;
+  }
+
+  .window-header {
+    font-size: 1rem;
+  }
+
+  .menu-bar {
     font-size: 12px;
+    gap: 12px;
+    padding: 5px 12px;
   }
 
-  .start-text {
-    display: inline;
+  .status-bar {
+    font-size: 11px;
+    padding: 5px 12px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1260px) {
+  body {
+    padding: 0 20px;
   }
 }
