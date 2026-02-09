@@ -118,7 +118,7 @@ export default function Home() {
           filesToUpload.length === 1
             ? `"${filesToUpload[0].name}" uploaded`
             : `${filesToUpload.length} files uploaded`,
-          { description: "Files are ready in My Documents." },
+          { description: "Files are ready in My Uploads." },
         )
       } catch {
         toast("Upload failed", { description: "Could not upload file. Please try again." })
@@ -292,8 +292,8 @@ export default function Home() {
           <span>My Computer</span>
         </button>
         <button onClick={() => openWindowHandler("documents")} className="icon-item">
-          <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Documents" />
-          <span>My Documents</span>
+          <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Uploads" />
+          <span>My Uploads</span>
         </button>
         <button onClick={() => openWindowHandler("recycle")} className="icon-item">
           <img src="https://win98icons.alexmeub.com/icons/png/recycle_bin_full-4.png" alt="Recycle Bin" />
@@ -365,7 +365,7 @@ export default function Home() {
             {openWindow === "documents" && (
               <div className="window">
                 <div className="window-header">
-                  <span>📁 My Documents</span>
+                  <span>📁 My Uploads</span>
                   <div className="window-controls">
                     <span>_</span>
                     <span>□</span>
@@ -436,7 +436,7 @@ export default function Home() {
                 </div>
                 <div className="status-bar">
                   <span>{documents.length} object(s)</span>
-                  <span>My Documents</span>
+                  <span>My Uploads</span>
                 </div>
               </div>
             )}
@@ -731,9 +731,9 @@ export default function Home() {
               <button onClick={() => openWindowHandler("documents")} className="start-menu-item">
                 <img
                   src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png"
-                  alt="My Documents"
+                  alt="My Uploads"
                 />
-                <span>My Documents</span>
+                <span>My Uploads</span>
               </button>
               <button onClick={() => openWindowHandler("computer")} className="start-menu-item">
                 <img src="https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png" alt="My Computer" />
