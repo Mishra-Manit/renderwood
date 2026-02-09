@@ -210,7 +210,7 @@ body {
 }
 
 header {
-  padding: 40px 0px;
+  padding: 40px 80px;
   text-align: center;
   position: relative;
   z-index: 2;
@@ -268,7 +268,7 @@ header {
 .hero-window {
   width: 100%;
   max-width: 1000px;
-  margin: 0px auto;
+  margin: 0 auto;
   position: relative;
   box-sizing: border-box;
 }
@@ -1112,12 +1112,12 @@ header {
   }
 
   header {
-    padding: 12px 0;
+    padding: 12px 24px;
   }
 
   .hero-window {
-    width: 88%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
   }
 
@@ -1147,14 +1147,10 @@ header {
 
   .main-container {
     width: 100%;
-    max-width: 100%;
-    padding: 0 10px;
+    max-width: none;
+    padding: 0;
     margin: 0;
     box-sizing: border-box;
-  }
-
-  .main-container .window {
-    width: 100%;
   }
 
   .video-controls-bar {
@@ -1241,12 +1237,12 @@ header {
   }
 
   header {
-    padding: 20px 0;
+    padding: 20px 48px;
   }
 
   .hero-window {
-    width: 86%;
-    max-width: 1000px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
   }
 
@@ -1281,14 +1277,9 @@ header {
 
   .main-container {
     width: 100%;
-    max-width: 100%;
+    max-width: none;
     padding: 0;
     box-sizing: border-box;
-  }
-
-  .main-container .window {
-    width: 100%;
-    margin-bottom: 20px;
   }
 
   .video-player-wrapper {
@@ -1353,15 +1344,5 @@ header {
     margin: 0;
     padding: 0 20px;
     box-sizing: border-box;
-  }
-
-  .hero-window {
-    width: 86%;
-    max-width: 1000px;
-  }
-
-  .main-container {
-    width: 100%;
-    max-width: 100%;
   }
 }
