@@ -12,3 +12,4 @@ pytest
 # Observability
 logfire>=4.22.0,<5.0.0
 langsmith[claude-agent-sdk,otel]>=0.6.9,<1.0.0
+opentelemetry-instrumentation-fastapi==0.60b1
