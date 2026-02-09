@@ -8,6 +8,7 @@ const Toaster = (props: ToasterProps) => {
       position="top-right"
       theme="light"
       className="renderwood-toaster"
+      duration={2500}
       toastOptions={{
         unstyled: true,
         classNames: {
