@@ -994,6 +994,17 @@ header {
   }
 }
 
+@keyframes renderwood-toast-exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(110%) scale(0.95);
+  }
+}
+
 /* Toast container – override Sonner's inline --width / --front-factor */
 [data-sonner-toaster] {
   --width: 320px !important;
@@ -1001,6 +1012,10 @@ header {
 
 .renderwood-toast {
   animation: renderwood-toast-enter 0.4s ease-out forwards !important;
+}
+
+.renderwood-toast[data-removed="true"] {
+  animation: renderwood-toast-exit 0.35s ease-in forwards !important;
   background: #ece9d8 !important;
   border: 2px solid !important;
   border-color: #ffffff #716f64 #716f64 #ffffff !important;
