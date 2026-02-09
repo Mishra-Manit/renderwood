@@ -25,6 +25,8 @@ export default function Home() {
   const [documents, setDocuments] = useState<UploadedFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [deletingDocs, setDeletingDocs] = useState<string[]>([])
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
+  const [fileDescription, setFileDescription] = useState("")
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -88,32 +90,49 @@ export default function Home() {
   }, [])
 
   const handleFileUpload = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files
       if (!files || files.length === 0) return
+      setPendingFiles(Array.from(files))
+      setFileDescription("")
+      // reset the input so the same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    },
+    [],
+  )
+
+  const handleConfirmUpload = useCallback(
+    async () => {
+      if (pendingFiles.length === 0) return
+      const filesToUpload = [...pendingFiles]
+      const description = fileDescription.trim()
+      setPendingFiles([])
+      setFileDescription("")
       setIsUploading(true)
       try {
-        const uploaded = Array.from(files)
-        for (const file of uploaded) {
-          await uploadFile(file)
+        for (const file of filesToUpload) {
+          await uploadFile(file, description)
         }
         await fetchDocuments()
         toast(
-          uploaded.length === 1
-            ? `"${uploaded[0].name}" uploaded`
-            : `${uploaded.length} files uploaded`,
+          filesToUpload.length === 1
+            ? `"${filesToUpload[0].name}" uploaded`
+            : `${filesToUpload.length} files uploaded`,
           { description: "Files are ready in My Documents." },
         )
       } catch {
         toast("Upload failed", { description: "Could not upload file. Please try again." })
       } finally {
         setIsUploading(false)
-        // reset the input so the same file can be re-selected
-        if (fileInputRef.current) fileInputRef.current.value = ""
       }
     },
-    [fetchDocuments],
+    [pendingFiles, fileDescription, fetchDocuments],
   )
+
+  const handleCancelUpload = useCallback(() => {
+    setPendingFiles([])
+    setFileDescription("")
+  }, [])
 
   const handleDeleteFile = useCallback(
     async (filename: string) => {
@@ -464,6 +483,43 @@ export default function Home() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {pendingFiles.length > 0 && (
+        <div className="upload-description-overlay">
+          <div className="upload-description-modal">
+            <div className="window-header">
+              <span>Describe Your Clip</span>
+              <div className="window-controls">
+                <span onClick={handleCancelUpload} style={{ cursor: "pointer" }}>
+                  ×
+                </span>
+              </div>
+            </div>
+            <div className="upload-description-body">
+              <p>
+                {pendingFiles.length === 1
+                  ? `Uploading "${pendingFiles[0].name}"`
+                  : `Uploading ${pendingFiles.length} files`}
+              </p>
+              <label htmlFor="clip-description">Describe this clip in one sentence:</label>
+              <input
+                id="clip-description"
+                type="text"
+                className="upload-description-input"
+                value={fileDescription}
+                onChange={(e) => setFileDescription(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleConfirmUpload() }}
+                placeholder="e.g. Aerial drone shot of a mountain sunset"
+                autoFocus
+              />
+              <div className="upload-description-actions">
+                <button className="win-btn" onClick={handleConfirmUpload}>OK</button>
+                <button className="win-btn" onClick={handleCancelUpload}>Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
       )}

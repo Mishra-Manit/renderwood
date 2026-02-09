@@ -27,6 +27,8 @@ export type UploadedFile = {
   name: string
   size: number
   type: string
+  description: string
+  uploaded_at: string
 }
 
 // ---------------------------------------------------------------------------
@@ -73,9 +75,10 @@ export async function listUploads(): Promise<UploadedFile[]> {
   return response.json()
 }
 
-export async function uploadFile(file: File): Promise<UploadedFile> {
+export async function uploadFile(file: File, description = ""): Promise<UploadedFile> {
   const formData = new FormData()
   formData.append("file", file)
+  formData.append("description", description)
 
   const response = await fetch(`${API_BASE_URL}/api/uploads`, {
     method: "POST",

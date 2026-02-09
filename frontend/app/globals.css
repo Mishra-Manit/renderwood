@@ -1038,6 +1038,83 @@ header {
   margin: 0;
 }
 
+/* ---- Upload Description Modal ---- */
+
+.upload-description-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.upload-description-modal {
+  width: 380px;
+  max-width: calc(100% - 32px);
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #ffffff #716f64 #716f64 #ffffff;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.upload-description-body {
+  padding: 16px;
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+.upload-description-body p {
+  margin: 0 0 8px;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.upload-description-body label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.upload-description-input {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-family: var(--font-space-mono), monospace;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.upload-description-input:focus {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.upload-description-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.win-btn {
+  min-width: 72px;
+  padding: 3px 12px;
+  font-size: 12px;
+  font-family: var(--font-space-mono), monospace;
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #ffffff #716f64 #716f64 #ffffff;
+  cursor: pointer;
+}
+
+.win-btn:active {
+  border-color: #716f64 #ffffff #ffffff #716f64;
+}
+
 /* ---- Renderwood Toast (Sonner) ---- */
 
 @keyframes renderwood-toast-enter {
