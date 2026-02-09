@@ -994,16 +994,23 @@ header {
   }
 }
 
+/* Toast container – override Sonner's inline --width / --front-factor */
+[data-sonner-toaster] {
+  --width: 320px !important;
+}
+
 .renderwood-toast {
-  animation: renderwood-toast-enter 0.4s ease-out forwards;
-  background: var(--win-gray);
-  border: 2px solid;
-  border-color: var(--win-white) var(--win-dark-shadow) var(--win-dark-shadow) var(--win-white);
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-  padding: 0;
-  font-family: var(--font-space-mono), monospace;
-  width: 320px;
-  overflow: hidden;
+  animation: renderwood-toast-enter 0.4s ease-out forwards !important;
+  background: #ece9d8 !important;
+  border: 2px solid !important;
+  border-color: #ffffff #716f64 #716f64 #ffffff !important;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3) !important;
+  padding: 0 !important;
+  font-family: var(--font-space-mono), monospace !important;
+  width: 320px !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  position: relative !important;
 }
 
 .renderwood-toast::before {
@@ -1020,45 +1027,44 @@ header {
     #003299 95%,
     #0050d7 100%
   );
-  border-radius: 0;
 }
 
 .renderwood-toast-title {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 12px;
-  font-weight: bold;
-  color: var(--text-dark);
-  padding: 8px 12px 2px;
-  line-height: 1.4;
+  font-family: var(--font-space-mono), monospace !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: #1a1a1a !important;
+  padding: 8px 12px 2px !important;
+  line-height: 1.4 !important;
 }
 
 .renderwood-toast-description {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 11px;
-  color: #555;
-  padding: 0 12px 8px;
-  line-height: 1.4;
+  font-family: var(--font-space-mono), monospace !important;
+  font-size: 11px !important;
+  color: #555555 !important;
+  padding: 0 12px 8px !important;
+  line-height: 1.4 !important;
 }
 
 .renderwood-toast-close {
-  position: absolute;
-  top: 2px;
-  right: 4px;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #e8a07a, #c5694a);
-  border: 1px solid #a84830;
-  border-radius: 2px;
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  cursor: pointer;
+  position: absolute !important;
+  top: 2px !important;
+  right: 4px !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(180deg, #e8a07a, #c5694a) !important;
+  border: 1px solid #a84830 !important;
+  border-radius: 2px !important;
+  color: white !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
-  padding: 0;
-  line-height: 1;
+  padding: 0 !important;
+  line-height: 1 !important;
 }
 
 .renderwood-toast-close:hover {
