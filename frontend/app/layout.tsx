@@ -8,25 +8,16 @@ const vt323 = VT323({ weight: "400", subsets: ["latin"], variable: "--font-vt323
 const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-space-mono" })
 
 export const metadata: Metadata = {
-  title: "RenderWood - AI Video Editor",
+  title: "Renderwood",
   description: "AI-powered promptable video editor with nostalgic Windows XP aesthetics",
-  generator: "v0.app",
+  generator: "renderwood",
   icons: {
     icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
       {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
   },
 }
 
