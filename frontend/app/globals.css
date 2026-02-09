@@ -1012,10 +1012,7 @@ header {
 
 .renderwood-toast {
   animation: renderwood-toast-enter 0.4s ease-out forwards !important;
-}
-
-.renderwood-toast[data-removed="true"] {
-  animation: renderwood-toast-exit 0.35s ease-in forwards !important;
+  opacity: 1 !important;
   background: #ece9d8 !important;
   border: 2px solid !important;
   border-color: #ffffff #716f64 #716f64 #ffffff !important;
@@ -1026,6 +1023,10 @@ header {
   overflow: hidden !important;
   border-radius: 0 !important;
   position: relative !important;
+}
+
+.renderwood-toast[data-removed="true"] {
+  animation: renderwood-toast-exit 0.35s ease-in forwards !important;
 }
 
 .renderwood-toast::before {
