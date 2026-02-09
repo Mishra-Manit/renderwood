@@ -24,6 +24,7 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [documents, setDocuments] = useState<UploadedFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [deletingDocs, setDeletingDocs] = useState<string[]>([])
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -116,11 +117,17 @@ export default function Home() {
 
   const handleDeleteFile = useCallback(
     async (filename: string) => {
+      setDeletingDocs((prev) => (prev.includes(filename) ? prev : [...prev, filename]))
+      window.setTimeout(() => {
+        setDocuments((prev) => prev.filter((doc) => doc.name !== filename))
+        setDeletingDocs((prev) => prev.filter((name) => name !== filename))
+      }, 180)
+
       try {
         await deleteUpload(filename)
-        await fetchDocuments()
       } catch {
-        // silently ignore
+        toast("Delete failed", { description: "Could not remove the file. Please try again." })
+        await fetchDocuments()
       }
     },
     [fetchDocuments],
@@ -374,19 +381,38 @@ export default function Home() {
                         Uploading...
                       </div>
                     )}
-                    {documents.map((doc) => (
-                      <a
-                        key={doc.name}
-                        href={getUploadUrl(doc.name)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="folder-item"
-                        title={`${doc.name} (${formatFileSize(doc.size)})`}
-                      >
-                        <img src={getFileIcon(doc.type, doc.name)} alt={doc.type} />
-                        <span>{doc.name}</span>
-                      </a>
-                    ))}
+                    {documents.map((doc) => {
+                      const isDeleting = deletingDocs.includes(doc.name)
+                      return (
+                        <div
+                          key={doc.name}
+                          className={`folder-item${isDeleting ? " folder-item--deleting" : ""}`}
+                          title={`${doc.name} (${formatFileSize(doc.size)})`}
+                        >
+                          <button
+                            type="button"
+                            className="folder-item-delete"
+                            aria-label={`Delete ${doc.name}`}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              handleDeleteFile(doc.name)
+                            }}
+                          >
+                            ×
+                          </button>
+                          <a
+                            href={getUploadUrl(doc.name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="folder-item-link"
+                          >
+                            <img src={getFileIcon(doc.type, doc.name)} alt={doc.type} />
+                            <span>{doc.name}</span>
+                          </a>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
                 <div className="status-bar">
@@ -610,16 +636,19 @@ export default function Home() {
                 </div>
               </div>
               <div className="video-controls-right">
-                {videoUrl && (
-                  <a href={videoUrl} download className="video-ctrl-btn" aria-label="Download" style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
-                    <img
-                      src="https://win98icons.alexmeub.com/icons/png/disk_drive_green-0.png"
-                      alt="Save"
-                      style={{ width: "16px", height: "16px", imageRendering: "pixelated" as const }}
-                    />
-                  </a>
-                )}
-                <button className="video-ctrl-btn" aria-label="Fullscreen" onClick={() => videoRef.current?.requestFullscreen()} disabled={!videoUrl}>&#9634;</button>
+                <button
+                  className="video-ctrl-btn"
+                  aria-label="Fullscreen"
+                  onClick={() => {
+                    if (!videoUrl) {
+                      toast("No video generated yet")
+                      return
+                    }
+                    videoRef.current?.requestFullscreen()
+                  }}
+                >
+                  &#9634;
+                </button>
               </div>
             </div>
           </div>
