@@ -143,8 +143,10 @@ body {
   font-family: var(--font-space-mono), monospace;
   color: var(--text-dark);
   overflow-x: hidden;
-  width: 1200px;
+  width: 100%;
+  max-width: 1200px;
   margin: 0px auto;
+  box-sizing: border-box;
 }
 
 .window {
@@ -218,6 +220,10 @@ header {
   position: relative;
   z-index: 2;
   padding-bottom: 48px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .desktop-icons {
@@ -260,9 +266,11 @@ header {
 }
 
 .hero-window {
-  width: 1000px;
+  width: 100%;
+  max-width: 1000px;
   margin: 0px auto;
   position: relative;
+  box-sizing: border-box;
 }
 
 .ai-prompt-area {
@@ -1092,6 +1100,7 @@ header {
     width: 100%;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
 
   .desktop-icons {
@@ -1100,6 +1109,10 @@ header {
 
   .window-controls {
     display: none;
+  }
+
+  header {
+    padding: 12px 0;
   }
 
   .hero-window {
@@ -1114,6 +1127,7 @@ header {
 
   .ai-prompt-box {
     padding: 10px;
+    max-width: 100%;
   }
 
   .ai-prompt-input {
@@ -1127,12 +1141,19 @@ header {
 
   .ai-prompt-actions {
     flex-wrap: wrap;
+    gap: 4px;
   }
 
   .main-container {
+    width: 100%;
     max-width: 100%;
     padding: 0 10px;
     margin: 0;
+    box-sizing: border-box;
+  }
+
+  .main-container .window {
+    width: 100%;
   }
 
   .video-controls-bar {
@@ -1209,20 +1230,97 @@ header {
 @media (min-width: 769px) and (max-width: 1024px) {
   body {
     width: 100%;
-    padding: 0 20px;
+    margin: 0;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+
+  .desktop-icons {
+    display: none;
+  }
+
+  header {
+    padding: 20px 0;
   }
 
   .hero-window {
     width: 100%;
+    margin: 0 auto;
   }
 
   .ai-prompt-area {
-    padding: 24px 20px;
+    padding: 20px 16px;
+    min-height: 200px;
+  }
+
+  .ai-prompt-box {
+    max-width: 100%;
+    padding: 10px 12px 8px 12px;
+  }
+
+  .ai-prompt-input {
+    font-size: 13px;
+  }
+
+  .ai-prompt-toolbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .ai-prompt-actions {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .ai-toolbar-btn {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 
   .main-container {
+    width: 100%;
     max-width: 100%;
     padding: 0;
+    box-sizing: border-box;
+  }
+
+  .main-container .window {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .video-player-wrapper {
+    width: 100%;
+  }
+
+  .video-controls-bar {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .video-ctrl-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .video-time-display {
+    font-size: 10px;
+  }
+
+  .window-header {
+    font-size: 1rem;
+  }
+
+  .menu-bar {
+    font-size: 12px;
+    gap: 12px;
+    padding: 5px 12px;
+  }
+
+  .status-bar {
+    font-size: 11px;
+    padding: 5px 12px;
   }
 
   .taskbar-time {
@@ -1243,5 +1341,25 @@ header {
 
   .start-text {
     display: inline;
+  }
+}
+
+/* Catch screens between 1025px-1250px where the 1200px body width overflows */
+@media (min-width: 1025px) and (max-width: 1260px) {
+  body {
+    width: 100%;
+    margin: 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  .hero-window {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .main-container {
+    width: 100%;
+    max-width: 100%;
   }
 }
