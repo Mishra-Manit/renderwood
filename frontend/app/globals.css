@@ -715,10 +715,21 @@ header {
   gap: 10px;
   padding: 0 12px;
   background: linear-gradient(180deg, #0f6aea, #0854ca);
+  border: none;
   border-left: 1px solid #1070f0;
   margin-left: auto;
   height: 100%;
   color: white;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.taskbar-time:hover {
+  background: linear-gradient(180deg, #1a7cff, #0960de);
+}
+
+.taskbar-time:active {
+  background: linear-gradient(180deg, #0854ca, #043da0);
 }
 
 .taskbar-icon {
@@ -961,6 +972,119 @@ header {
   font-size: 14px;
   color: var(--text-dark);
   margin: 0;
+}
+
+/* ---- Renderwood Toast (Sonner) ---- */
+
+@keyframes renderwood-toast-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-4px) scale(1.01);
+  }
+  80% {
+    transform: translateX(2px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes renderwood-toast-exit {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(110%) scale(0.95);
+  }
+}
+
+/* Toast container – override Sonner's inline --width / --front-factor */
+[data-sonner-toaster] {
+  --width: 320px !important;
+}
+
+.renderwood-toast {
+  animation: renderwood-toast-enter 0.4s ease-out forwards !important;
+  opacity: 1 !important;
+  background: #ece9d8 !important;
+  border: 2px solid !important;
+  border-color: #ffffff #716f64 #716f64 #ffffff !important;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3) !important;
+  padding: 0 !important;
+  font-family: var(--font-space-mono), monospace !important;
+  width: 320px !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  position: relative !important;
+}
+
+.renderwood-toast[data-removed="true"] {
+  animation: renderwood-toast-exit 0.35s ease-in forwards !important;
+}
+
+.renderwood-toast::before {
+  content: "";
+  display: block;
+  height: 22px;
+  background: linear-gradient(
+    180deg,
+    #0997ff,
+    #0054e3 8%,
+    #0054e3 40%,
+    #0344b3 88%,
+    #003cad 93%,
+    #003299 95%,
+    #0050d7 100%
+  );
+}
+
+.renderwood-toast-title {
+  font-family: var(--font-space-mono), monospace !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color: #1a1a1a !important;
+  padding: 8px 12px 2px !important;
+  line-height: 1.4 !important;
+}
+
+.renderwood-toast-description {
+  font-family: var(--font-space-mono), monospace !important;
+  font-size: 11px !important;
+  color: #555555 !important;
+  padding: 0 12px 8px !important;
+  line-height: 1.4 !important;
+}
+
+.renderwood-toast-close {
+  position: absolute !important;
+  top: 2px !important;
+  right: 4px !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(180deg, #e8a07a, #c5694a) !important;
+  border: 1px solid #a84830 !important;
+  border-radius: 2px !important;
+  color: white !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  padding: 0 !important;
+  line-height: 1 !important;
+}
+
+.renderwood-toast-close:hover {
+  filter: brightness(1.15);
 }
 
 /* Mobile responsive overrides */

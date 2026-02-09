@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { toast } from "sonner"
 
 import {
   createVideo,
@@ -33,6 +34,8 @@ export default function Home() {
   const [selectedStyle, setSelectedStyle] = useState<VideoStyle>("general")
   const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false)
 
+  const [clockText, setClockText] = useState("")
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const lastSubmittedPromptRef = useRef<string | null>(null)
@@ -51,6 +54,18 @@ export default function Home() {
   useEffect(() => {
     fetchDocuments()
   }, [fetchDocuments])
+
+  // Live clock for taskbar
+  useEffect(() => {
+    const update = () => {
+      setClockText(
+        new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      )
+    }
+    update()
+    const id = setInterval(update, 10_000)
+    return () => clearInterval(id)
+  }, [])
 
   // Fetch available video styles from the backend on mount
   useEffect(() => {
@@ -77,12 +92,19 @@ export default function Home() {
       if (!files || files.length === 0) return
       setIsUploading(true)
       try {
-        for (const file of Array.from(files)) {
+        const uploaded = Array.from(files)
+        for (const file of uploaded) {
           await uploadFile(file)
         }
         await fetchDocuments()
+        toast(
+          uploaded.length === 1
+            ? `"${uploaded[0].name}" uploaded`
+            : `${uploaded.length} files uploaded`,
+          { description: "Files are ready in My Documents." },
+        )
       } catch {
-        // upload error — could show a message, but for now silently handle
+        toast("Upload failed", { description: "Could not upload file. Please try again." })
       } finally {
         setIsUploading(false)
         // reset the input so the same file can be re-selected
@@ -183,6 +205,7 @@ export default function Home() {
         lastSubmittedPromptRef.current = null
       } else if (result.job_id) {
         setVideoUrl(getVideoUrl(result.job_id))
+        toast("Video ready", { description: "Your generated video is now available to view." })
       }
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
@@ -656,9 +679,18 @@ export default function Home() {
           </div>
         )}
 
-        <div className="taskbar-time">
-          <span className="time-text">12:00 PM</span>
-        </div>
+        <button
+          className="taskbar-time"
+          onClick={() =>
+            toast("System notification", {
+              description: "All systems operational. RenderWood is running.",
+            })
+          }
+          aria-label="Show test notification"
+          type="button"
+        >
+          <span className="time-text">{clockText || "12:00 PM"}</span>
+        </button>
       </div>
     </>
   )
