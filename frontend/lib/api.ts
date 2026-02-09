@@ -1,3 +1,20 @@
+// ---------------------------------------------------------------------------
+// Video styles
+// ---------------------------------------------------------------------------
+
+/** Mirrors the backend `VideoStyle` enum values. */
+export type VideoStyle = "general" | "trailer"
+
+export type VideoStyleOption = {
+  value: VideoStyle
+  label: string
+  description: string
+}
+
+// ---------------------------------------------------------------------------
+// Response / entity types
+// ---------------------------------------------------------------------------
+
 export type VideoCreateResponse = {
   job_id: string
   status: string
@@ -12,16 +29,32 @@ export type UploadedFile = {
   type: string
 }
 
+// ---------------------------------------------------------------------------
+// API client
+// ---------------------------------------------------------------------------
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 
-export async function createVideo(prompt: string, signal?: AbortSignal): Promise<VideoCreateResponse> {
+export async function listVideoStyles(): Promise<VideoStyleOption[]> {
+  const response = await fetch(`${API_BASE_URL}/api/video-styles`)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch video styles (${response.status})`)
+  }
+  return response.json()
+}
+
+export async function createVideo(
+  prompt: string,
+  videoStyle: VideoStyle = "general",
+  signal?: AbortSignal,
+): Promise<VideoCreateResponse> {
   const response = await fetch(`${API_BASE_URL}/api/videos/create`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ prompt }),
-    signal
+    body: JSON.stringify({ prompt, video_style: videoStyle }),
+    signal,
   })
 
   if (!response.ok) {

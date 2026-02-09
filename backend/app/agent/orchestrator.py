@@ -19,6 +19,7 @@ from claude_agent_sdk import (
 from app.agent.observability import configure_observability, get_logfire
 from app.agent.prompt_enhancer import enhance_prompt
 from app.agent.prompts import REMOTION_AGENT_SYSTEM_PROMPT
+from app.agent.video_styles import VideoStyle
 from app.config import settings
 
 configure_observability(
@@ -29,16 +30,21 @@ configure_observability(
 logfire = get_logfire()
 
 
-async def run(job_id: str, prompt: str) -> dict[str, str]:
+async def run(
+    job_id: str,
+    prompt: str,
+    video_style: VideoStyle = VideoStyle.GENERAL,
+) -> dict[str, str]:
     """Run a Remotion job and return output paths."""
     with logfire.span(
         "remotion_video_generation",
         job_id=job_id,
         user_prompt=prompt,
+        video_style=video_style.value,
     ):
         job_dir, output_dir = _setup_job_directory(job_id)
 
-        enhanced_prompt = await enhance_prompt(prompt)
+        enhanced_prompt = await enhance_prompt(prompt, style=video_style)
         agent_prompt = _build_agent_prompt(enhanced_prompt)
 
         options = _build_agent_options(job_dir)

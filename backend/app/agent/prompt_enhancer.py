@@ -1,19 +1,24 @@
-"""Enhance short user prompts into detailed video production briefs."""
+"""Enhance short user prompts into detailed video production briefs.
+
+Supports per-style prompt enhancement: each :class:`VideoStyle` can append
+a style-specific addendum to the base system prompt so the LLM generates a
+production brief tailored to that genre.
+"""
 
 from __future__ import annotations
 
-from pydantic_ai import Agent  # type: ignore[import-not-found]
-from pydantic_ai.models.openai import OpenAIModel  # type: ignore[import-not-found]
-from pydantic_ai.providers.fireworks import (  # type: ignore[import-not-found]
-    FireworksProvider,
-)
-
+from app.agent.agent_factory import get_prompt_enhancer_agent
 from app.agent.observability import get_logfire
+from app.agent.video_styles import VideoStyle
 from app.config import settings
 
 logfire = get_logfire()
 
-ENHANCER_SYSTEM_PROMPT = """
+# ---------------------------------------------------------------------------
+# Base system prompt (shared across all styles)
+# ---------------------------------------------------------------------------
+
+_BASE_SYSTEM_PROMPT = """
 You are a senior prompt engineer for AI agents that implement complex creative
 and engineering tasks. Your job is to expand a short user request into a
 precise, production-ready brief that an agent can execute later. Do NOT execute
@@ -121,29 +126,42 @@ Now enhance the following user request between triple quotes:
 \"\"\"{{USER_PROMPT}}\"\"\"
 """.strip()
 
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
-async def enhance_prompt(user_prompt: str) -> str:
-    """Expand a short prompt into a detailed production brief."""
+
+async def enhance_prompt(
+    user_prompt: str,
+    style: VideoStyle = VideoStyle.GENERAL,
+) -> str:
+    """Expand a short prompt into a detailed, style-aware production brief.
+
+    Parameters
+    ----------
+    user_prompt:
+        The raw user prompt text.
+    style:
+        The video production style to apply.  Defaults to ``GENERAL``.
+    """
     if not settings.fireworks_api_key:
         logfire.warn("fireworks_api_key not set, skipping prompt enhancement")
         return user_prompt
 
     try:
-        result = await _ENHANCER_AGENT.run(user_prompt)
+        agent = get_prompt_enhancer_agent(style, _BASE_SYSTEM_PROMPT)
+        result = await agent.run(user_prompt)
         enhanced = result.output.strip()
-        logfire.info("prompt_enhanced", enhanced_prompt=enhanced)
+        logfire.info(
+            "prompt_enhanced",
+            video_style=style.value,
+            enhanced_prompt=enhanced,
+        )
         return enhanced
     except Exception as exc:
-        logfire.error("prompt_enhancement_failed", error=str(exc))
+        logfire.error(
+            "prompt_enhancement_failed",
+            video_style=style.value,
+            error=str(exc),
+        )
         return user_prompt
-
-
-_FIREWORKS_MODEL = OpenAIModel(
-    settings.fireworks_model,
-    provider=FireworksProvider(api_key=settings.fireworks_api_key),
-)
-_ENHANCER_AGENT = Agent(
-    _FIREWORKS_MODEL,
-    system_prompt=ENHANCER_SYSTEM_PROMPT,
-    output_type=str,
-)

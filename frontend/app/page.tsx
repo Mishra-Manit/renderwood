@@ -2,8 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { createVideo, listUploads, uploadFile, deleteUpload, getUploadUrl, getVideoUrl } from "../lib/api"
-import type { UploadedFile } from "../lib/api"
+import {
+  createVideo,
+  listUploads,
+  listVideoStyles,
+  uploadFile,
+  deleteUpload,
+  getUploadUrl,
+  getVideoUrl,
+} from "../lib/api"
+import type { UploadedFile, VideoStyle, VideoStyleOption } from "../lib/api"
 
 type WindowType = "computer" | "documents" | "recycle" | null
 
@@ -19,10 +27,17 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+
+  // Video style state
+  const [videoStyles, setVideoStyles] = useState<VideoStyleOption[]>([])
+  const [selectedStyle, setSelectedStyle] = useState<VideoStyle>("general")
+  const [isStyleMenuOpen, setIsStyleMenuOpen] = useState(false)
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const lastSubmittedPromptRef = useRef<string | null>(null)
   const requestControllerRef = useRef<AbortController | null>(null)
+  const styleMenuRef = useRef<HTMLDivElement | null>(null)
 
   const fetchDocuments = useCallback(async () => {
     try {
@@ -36,6 +51,25 @@ export default function Home() {
   useEffect(() => {
     fetchDocuments()
   }, [fetchDocuments])
+
+  // Fetch available video styles from the backend on mount
+  useEffect(() => {
+    let cancelled = false
+    listVideoStyles()
+      .then((styles) => {
+        if (!cancelled) setVideoStyles(styles)
+      })
+      .catch(() => {
+        // Fallback: provide a hardcoded default so the UI is never empty
+        if (!cancelled) {
+          setVideoStyles([
+            { value: "general", label: "General", description: "Default video style." },
+            { value: "trailer", label: "Trailer", description: "Cinematic trailer style." },
+          ])
+        }
+      })
+    return () => { cancelled = true }
+  }, [])
 
   const handleFileUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +119,21 @@ export default function Home() {
     }
   }, [])
 
+  // Close the video-style dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        styleMenuRef.current &&
+        !styleMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsStyleMenuOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   const getFileIcon = (type: string, name: string): string => {
     if (type.startsWith("image/")) return "https://win98icons.alexmeub.com/icons/png/paint_file-5.png"
     if (type.startsWith("video/")) return "https://win98icons.alexmeub.com/icons/png/mplayer-2.png"
@@ -113,7 +162,7 @@ export default function Home() {
     setOpenWindow(null)
   }
 
-  const submitPrompt = useCallback(async (value: string) => {
+  const submitPrompt = useCallback(async (value: string, style: VideoStyle) => {
     const trimmed = value.trim()
     if (!trimmed || trimmed === lastSubmittedPromptRef.current) {
       return
@@ -128,7 +177,7 @@ export default function Home() {
     setSubmitError(null)
 
     try {
-      const result = await createVideo(trimmed, controller.signal)
+      const result = await createVideo(trimmed, style, controller.signal)
       if (result.status === "failed") {
         setSubmitError(result.error ?? "Video request failed.")
         lastSubmittedPromptRef.current = null
@@ -181,6 +230,10 @@ export default function Home() {
 
   const statusLabel = submitError ? "Error sending prompt" : isSubmitting ? "Submitting..." : "Ready"
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
+  const isTrailerSelected = selectedStyle === "trailer"
+  const displayedStyles = videoStyles.filter(
+    (style) => style.value === "general" || style.value === "trailer",
+  )
 
   return (
     <>
@@ -409,16 +462,43 @@ export default function Home() {
                   >
                     {isUploading ? "..." : "+"}
                   </button>
-                  <button className="ai-toolbar-btn ai-toolbar-btn-accent">
-                    <span className="ai-bolt-icon">&#9889;</span> Inspiration
-                  </button>
+                  <div className="ai-style-selector" ref={styleMenuRef}>
+                    <button
+                      className={`ai-toolbar-btn ai-toolbar-btn-accent${isTrailerSelected ? " ai-toolbar-btn-accent-trailer" : ""}`}
+                      style={isTrailerSelected ? { background: "#e6dcff", color: "#4a2f7a" } : undefined}
+                      onClick={() => setIsStyleMenuOpen((prev) => !prev)}
+                      aria-haspopup="listbox"
+                      aria-expanded={isStyleMenuOpen}
+                    >
+                      <span className="ai-bolt-icon">&#9889;</span>{" "}
+                      {displayedStyles.find((s) => s.value === selectedStyle)?.label ?? "Style"}
+                    </button>
+                    {isStyleMenuOpen && (
+                      <ul className="ai-style-menu" role="listbox">
+                        {displayedStyles.map((style) => (
+                          <li
+                            key={style.value}
+                            role="option"
+                            aria-selected={style.value === selectedStyle}
+                            className={`ai-style-menu-item ai-style-menu-item-${style.value}${style.value === selectedStyle ? " ai-style-menu-item-active" : ""}`}
+                            onClick={() => {
+                              setSelectedStyle(style.value)
+                              setIsStyleMenuOpen(false)
+                            }}
+                          >
+                            <span className="ai-style-menu-label">{style.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                   <button className="ai-toolbar-btn">RenderWood v1</button>
                 </div>
                 <div className="ai-prompt-send-group">
                   <button
                     className="ai-send-btn"
                     aria-label={isSubmitting ? "Submitting prompt" : "Submit prompt"}
-                    onClick={() => submitPrompt(prompt)}
+                    onClick={() => submitPrompt(prompt, selectedStyle)}
                     disabled={isSubmitting || !prompt.trim()}
                   >
                     {isSubmitting ? (
