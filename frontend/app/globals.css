@@ -323,7 +323,6 @@ header {
   display: flex;
   align-items: center;
   gap: 6px;
-  position: relative;
 }
 
 .ai-toolbar-btn {
@@ -365,15 +364,15 @@ header {
 /* ---- Video Style Selector ---- */
 
 .ai-style-selector {
-  position: static;
+  position: relative;
   display: inline-block;
 }
 
 .ai-style-menu {
   position: absolute;
   bottom: calc(100% + 4px);
-  left: auto;
-  right: 0;
+  left: 0;
+  right: auto;
   min-width: 150px;
   background: var(--win-gray);
   border: 2px solid;
