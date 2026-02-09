@@ -21,3 +21,4 @@ backend/.env
 backend/remotion_project/props/
 backend/final_vids/
 backend/remotion_jobs/
+backend/uploads/

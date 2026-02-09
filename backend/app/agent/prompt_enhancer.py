@@ -39,7 +39,11 @@ commentary.
 
 Prompt creation rules:
 - Max resolution is 1920x1080p.
-- There are no provided inputs or assets.
+- If assets are provided below, reference them explicitly in the 'Inputs & assets'
+  section and weave them into the implementation details. The enhanced prompt MUST
+  make it clear which assets the agent should use, their filenames, and how they
+  should appear in the video. If no assets are provided, state that there are no
+  provided inputs or assets.
 - Do not specify an output file.
 
 Use this structure:
@@ -132,6 +136,7 @@ Now enhance the following user request between triple quotes:
 async def enhance_prompt(
     user_prompt: str,
     style: VideoStyle = VideoStyle.GENERAL,
+    assets_context: str = "",
 ) -> str:
     """Expand a short prompt into a detailed, style-aware production brief.
 
@@ -141,6 +146,10 @@ async def enhance_prompt(
         The raw user prompt text.
     style:
         The video production style to apply.  Defaults to ``GENERAL``.
+    assets_context:
+        Optional plain-text block listing uploaded assets and their
+        descriptions.  When non-empty, the prompt enhancer will weave
+        these assets into the production brief.
     """
     logfire = get_logfire()
 
@@ -151,7 +160,12 @@ async def enhance_prompt(
     with logfire.span("prompt_enhancement", video_style=style.value):
         try:
             agent = get_prompt_enhancer_agent(style, _BASE_SYSTEM_PROMPT)
-            result = await agent.run(user_prompt)
+            prompt_input = (
+                f"{user_prompt}\n\n{assets_context}"
+                if assets_context
+                else user_prompt
+            )
+            result = await agent.run(prompt_input)
             enhanced = result.output.strip()
 
             logfire.info(

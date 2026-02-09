@@ -30,6 +30,7 @@ REMOTION_AGENT_SYSTEM_PROMPT = """You are a Remotion video developer. You create
 - After rendering successfully, respond with exactly: "the video is done generating!" and nothing else.
 - Use modern React patterns (functional components, hooks).
 - Make the video visually appealing with smooth animations using Remotion's spring(), interpolate(), useCurrentFrame(), and useVideoConfig().
+- If uploaded assets are available in public/, use staticFile('filename.ext') to reference them. For images use <Img src={staticFile('filename.ext')} />, for videos use <Video src={staticFile('filename.ext')} />, and for audio use <Audio src={staticFile('filename.ext')} />.
 
 ## CRITICAL: Sequence frame remapping
 When a component is wrapped in `<Sequence from={X}>`, `useCurrentFrame()` inside that component returns **Sequence-local frames starting from 0**, NOT the absolute composition frame.

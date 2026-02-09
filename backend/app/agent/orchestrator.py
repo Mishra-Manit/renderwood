@@ -20,6 +20,11 @@ from claude_agent_sdk import (
 from app.agent.observability import get_logfire
 from app.agent.prompt_enhancer import enhance_prompt
 from app.agent.prompts import REMOTION_AGENT_SYSTEM_PROMPT
+from app.agent.upload_assets import (
+    collect_asset_summaries,
+    copy_uploads_to_job,
+    format_assets_context,
+)
 from app.agent.video_styles import VideoStyle
 from app.config import settings
 
@@ -38,8 +43,16 @@ async def run(
     ):
         job_dir, output_dir = _setup_job_directory(job_id)
 
-        enhanced_prompt = await enhance_prompt(prompt, style=video_style)
-        agent_prompt = _build_agent_prompt(enhanced_prompt)
+        summaries = collect_asset_summaries()
+        assets_context = format_assets_context(summaries)
+
+        if summaries:
+            copy_uploads_to_job(job_dir)
+
+        enhanced_prompt = await enhance_prompt(
+            prompt, style=video_style, assets_context=assets_context,
+        )
+        agent_prompt = _build_agent_prompt(enhanced_prompt, assets_context)
 
         options = _build_agent_options(job_dir)
 
@@ -86,14 +99,23 @@ def _setup_job_directory(job_id: str) -> tuple[Path, Path]:
         return job_dir, output_dir
 
 
-def _build_agent_prompt(user_prompt: str) -> str:
+def _build_agent_prompt(user_prompt: str, assets_context: str = "") -> str:
     """Construct the agent instruction prompt."""
-    return (
+    parts = [
         f"User request: {user_prompt}\n\n"
         "The Remotion project is in the current directory. "
         "Edit the source files, then render the video. "
-        "The final output file MUST be saved to: output/video.mp4."
-    )
+        "The final output file MUST be saved to: output/video.mp4.",
+    ]
+
+    if assets_context:
+        parts.append(
+            "\n\nUploaded assets are available in public/ and can be "
+            "referenced using staticFile('filename.ext').\n\n"
+            f"{assets_context}"
+        )
+
+    return "".join(parts)
 
 
 def _build_agent_options(job_dir: Path) -> ClaudeAgentOptions:
