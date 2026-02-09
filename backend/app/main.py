@@ -12,10 +12,11 @@ from app.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    configure_observability(
+    logfire = configure_observability(
         service_name="renderwood-agent",
         environment=settings.environment,
     )
+    logfire.instrument_fastapi(app, extra_spans=True)
     settings.output_dir.mkdir(parents=True, exist_ok=True)
     settings.remotion_jobs_path.mkdir(parents=True, exist_ok=True)
     settings.upload_dir.mkdir(parents=True, exist_ok=True)

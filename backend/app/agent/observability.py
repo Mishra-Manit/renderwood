@@ -47,6 +47,7 @@ def configure_observability(
     )
 
     logfire.instrument_pydantic_ai()
+    logfire.instrument_anthropic()
     configure_claude_agent_sdk()
     _patch_langsmith_usage_metadata()
 
@@ -55,9 +56,6 @@ def configure_observability(
 
 def get_logfire() -> Any:
     """Return a configured Logfire instance."""
-    if not getattr(logfire, "is_configured", lambda: False)():  # pragma: no cover
-        return configure_observability(environment=settings.environment)
-
     return logfire
 
 

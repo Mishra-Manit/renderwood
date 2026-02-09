@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 from pathlib import Path
 
@@ -114,20 +115,28 @@ async def _run_agent(
     output_dir: Path,
 ) -> Path:
     """Run the agent and return the expected output path."""
+    logfire = get_logfire()
     with logfire.span("agent_execution"):
         turn_count = 0
+        result_received = False
+
+        # Set the API key in the environment for the SDK
+        os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
 
         async with ClaudeSDKClient(options=options) as client:
             await client.query(prompt)
 
             async for message in client.receive_response():
+                if result_received:
+                    continue
+
                 if isinstance(message, AssistantMessage):
                     turn_count += 1
                     _log_assistant_message(message, turn_count)
 
                 elif isinstance(message, ResultMessage):
                     _handle_result_message(message, turn_count, output_dir)
-                    break
+                    result_received = True
 
         return output_dir / "video.mp4"
 

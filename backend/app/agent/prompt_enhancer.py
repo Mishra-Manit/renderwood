@@ -143,24 +143,30 @@ async def enhance_prompt(
         The video production style to apply.  Defaults to ``GENERAL``.
     """
     logfire = get_logfire()
+
     if not settings.fireworks_api_key:
         logfire.warn("fireworks_api_key not set, skipping prompt enhancement")
         return user_prompt
 
-    try:
-        agent = get_prompt_enhancer_agent(style, _BASE_SYSTEM_PROMPT)
-        result = await agent.run(user_prompt)
-        enhanced = result.output.strip()
-        logfire.info(
-            "prompt_enhanced",
-            video_style=style.value,
-            enhanced_prompt=enhanced,
-        )
-        return enhanced
-    except Exception as exc:
-        logfire.error(
-            "prompt_enhancement_failed",
-            video_style=style.value,
-            error=str(exc),
-        )
-        return user_prompt
+    with logfire.span("prompt_enhancement", video_style=style.value):
+        try:
+            agent = get_prompt_enhancer_agent(style, _BASE_SYSTEM_PROMPT)
+            result = await agent.run(user_prompt)
+            enhanced = result.output.strip()
+
+            logfire.info(
+                "prompt_enhanced",
+                original_prompt=user_prompt,
+                enhanced_prompt=enhanced,
+                style=style.value,
+            )
+            return enhanced
+
+        except Exception as exc:
+            logfire.error(
+                "prompt_enhancement_failed",
+                error=str(exc),
+                error_type=type(exc).__name__,
+                user_prompt=user_prompt,
+            )
+            return user_prompt
