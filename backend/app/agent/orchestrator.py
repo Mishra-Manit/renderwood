@@ -16,19 +16,11 @@ from claude_agent_sdk import (
     ToolUseBlock,
 )
 
-from app.agent.observability import configure_observability, get_logfire
+from app.agent.observability import get_logfire
 from app.agent.prompt_enhancer import enhance_prompt
 from app.agent.prompts import REMOTION_AGENT_SYSTEM_PROMPT
 from app.agent.video_styles import VideoStyle
 from app.config import settings
-
-configure_observability(
-    service_name="renderwood-agent",
-    environment=settings.environment if hasattr(settings, "environment") else "development",
-)
-
-logfire = get_logfire()
-
 
 async def run(
     job_id: str,
@@ -36,6 +28,7 @@ async def run(
     video_style: VideoStyle = VideoStyle.GENERAL,
 ) -> dict[str, str]:
     """Run a Remotion job and return output paths."""
+    logfire = get_logfire()
     with logfire.span(
         "remotion_video_generation",
         job_id=job_id,
@@ -69,6 +62,7 @@ async def run(
 
 def _setup_job_directory(job_id: str) -> tuple[Path, Path]:
     """Create the job directory and output folder."""
+    logfire = get_logfire()
     with logfire.span("setup_job_directory", job_id=job_id):
         job_dir = settings.remotion_jobs_path / job_id
         output_dir = job_dir / "output"
@@ -140,6 +134,7 @@ async def _run_agent(
 
 def _log_assistant_message(message: AssistantMessage, turn_count: int) -> None:
     """Log assistant message content blocks."""
+    logfire = get_logfire()
     with logfire.span(f"agent_turn_{turn_count}"):
         for block in message.content:
             if isinstance(block, TextBlock):
@@ -177,6 +172,7 @@ def _handle_result_message(
     message: ResultMessage, turn_count: int, output_dir: Path
 ) -> None:
     """Handle the final result message from the agent."""
+    logfire = get_logfire()
     if message.is_error:
         video_exists = (output_dir / "video.mp4").exists()
         logfire.error(
@@ -206,6 +202,7 @@ def _handle_result_message(
 
 def _validate_output(output_path: Path) -> None:
     """Validate that the output video was generated."""
+    logfire = get_logfire()
     if not output_path.exists():
         logfire.error(
             "output_validation_failed",
@@ -218,6 +215,7 @@ def _validate_output(output_path: Path) -> None:
 
 def copy_output_to_final(output_path: Path, job_id: str) -> Path:
     """Copy the job output video into the final output directory."""
+    logfire = get_logfire()
     final_dir = settings.output_dir
     final_dir.mkdir(parents=True, exist_ok=True)
     final_path = final_dir / f"{job_id}.mp4"

@@ -12,8 +12,6 @@ from app.agent.observability import get_logfire
 from app.agent.video_styles import VideoStyle
 from app.config import settings
 
-logfire = get_logfire()
-
 # ---------------------------------------------------------------------------
 # Base system prompt (shared across all styles)
 # ---------------------------------------------------------------------------
@@ -144,6 +142,7 @@ async def enhance_prompt(
     style:
         The video production style to apply.  Defaults to ``GENERAL``.
     """
+    logfire = get_logfire()
     if not settings.fireworks_api_key:
         logfire.warn("fireworks_api_key not set, skipping prompt enhancement")
         return user_prompt

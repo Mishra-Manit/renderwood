@@ -5,12 +5,17 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.agent.observability import configure_observability
 from app.api.routes import uploads, videos
 from app.config import settings
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    configure_observability(
+        service_name="renderwood-agent",
+        environment=settings.environment,
+    )
     settings.output_dir.mkdir(parents=True, exist_ok=True)
     settings.remotion_jobs_path.mkdir(parents=True, exist_ok=True)
     settings.upload_dir.mkdir(parents=True, exist_ok=True)
