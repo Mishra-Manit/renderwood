@@ -54,6 +54,14 @@ enhanced brief follows trailer conventions:
    points in the timeline for key visual hits.
 7) **Final beat**: End with a logo reveal or tagline card that lingers for
    1-2 seconds before a hard cut to black.
+8) **Background music (REQUIRED)**: Every trailer MUST include background music.
+   Built-in tracks are available at `public/music/`:
+   - `music/dramatic.mp3` — intense cinematic score (default choice)
+   - `music/mysterious.mp3` — dark, atmospheric, suspenseful
+   - `music/speeding_up_dramatic.mp3` — escalating tempo, great for build-ups
+   The enhanced prompt MUST specify which track to use and instruct the agent to
+   add an `<Audio>` component with fade-in/fade-out and low volume (0.15–0.3).
+   Pick the track that best matches the mood. When in doubt, use `music/dramatic.mp3`.
 
 Keep all other base rules.  The output must still be a single enhanced prompt
 (no preamble or commentary).

@@ -45,6 +45,14 @@ Prompt creation rules:
   should appear in the video. If no assets are provided, state that there are no
   provided inputs or assets.
 - Do not specify an output file.
+- Built-in background music tracks are available at `public/music/`:
+  • `music/dramatic.mp3` — intense cinematic dramatic score
+  • `music/mysterious.mp3` — dark, atmospheric, suspenseful
+  • `music/speeding_up_dramatic.mp3` — escalating tempo dramatic score
+  When the style calls for music (e.g., trailers), specify which track to use
+  in the 'Inputs & assets' section. Reference it as `staticFile('music/<track>.mp3')`.
+  Include instructions to use `<Audio>` from `@remotion/media` with fade-in/fade-out
+  and volume between 0.15–0.3.
 
 Use this structure:
 - Title (one line)
