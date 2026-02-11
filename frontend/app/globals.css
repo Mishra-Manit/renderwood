@@ -960,6 +960,11 @@ header {
   image-rendering: pixelated;
 }
 
+.folder-item img.folder-item-thumbnail {
+  image-rendering: auto;
+  object-fit: cover;
+}
+
 .folder-item span {
   font-size: 12px;
   word-wrap: break-word;

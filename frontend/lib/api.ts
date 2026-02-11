@@ -29,6 +29,7 @@ export type UploadedFile = {
   type: string
   description: string
   uploaded_at: string
+  has_thumbnail: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -104,6 +105,10 @@ export async function deleteUpload(filename: string): Promise<void> {
 
 export function getUploadUrl(filename: string): string {
   return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`
+}
+
+export function getUploadThumbnailUrl(filename: string): string {
+  return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}/thumbnail`
 }
 
 export function getVideoUrl(jobId: string): string {

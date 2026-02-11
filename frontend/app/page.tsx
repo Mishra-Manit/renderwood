@@ -10,6 +10,7 @@ import {
   uploadFile,
   deleteUpload,
   getUploadUrl,
+  getUploadThumbnailUrl,
   getVideoUrl,
 } from "../lib/api"
 import type { UploadedFile, VideoStyle, VideoStyleOption } from "../lib/api"
@@ -402,6 +403,10 @@ export default function Home() {
                     )}
                     {documents.map((doc) => {
                       const isDeleting = deletingDocs.includes(doc.name)
+                      const hasVideoThumbnail = doc.type.startsWith("video/") && doc.has_thumbnail
+                      const previewSrc = hasVideoThumbnail
+                        ? getUploadThumbnailUrl(doc.name)
+                        : getFileIcon(doc.type, doc.name)
                       return (
                         <div
                           key={doc.name}
@@ -426,7 +431,11 @@ export default function Home() {
                             rel="noopener noreferrer"
                             className="folder-item-link"
                           >
-                            <img src={getFileIcon(doc.type, doc.name)} alt={doc.type} />
+                            <img
+                              src={previewSrc}
+                              alt={hasVideoThumbnail ? `${doc.name} thumbnail` : doc.type}
+                              className={hasVideoThumbnail ? "folder-item-thumbnail" : undefined}
+                            />
                             <span>{doc.name}</span>
                           </a>
                         </div>
