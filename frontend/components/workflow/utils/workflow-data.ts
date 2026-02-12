@@ -85,7 +85,7 @@ export const workflowEdges: WorkflowEdge[] = [
   // Row 1 (Left to Right): API → Setup → Assets → Prompt
   { id: "e1", source: "apiEntry", target: "jobSetup", type: "smoothstep" },
   { id: "e2", source: "jobSetup", target: "assetCopy", type: "smoothstep" },
-  { id: "e3", source: "assetCopy", target: "promptEnhancement", type: "straight", sourceHandle: "output", targetHandle: "input-left" },
+  { id: "e3", source: "assetCopy", target: "promptEnhancement", type: "smoothstep", sourceHandle: "output", targetHandle: "input-left" },
   
   // Transition from Row 1 to Row 2: Prompt → Plan
   { id: "e4", source: "promptEnhancement", target: "agentPlanning", type: "smoothstep" },

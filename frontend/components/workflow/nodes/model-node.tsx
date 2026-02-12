@@ -27,7 +27,7 @@ export function ModelNode({ data }: ModelNodeProps) {
         )}
       </div>
       <Handle type="target" position={Position.Top} id="input-top" />
-      <Handle type="target" position={Position.Left} id="input-left" />
+      <Handle type="target" position={Position.Left} id="input-left" style={{ top: '25%' }} />
       <Handle type="source" position={Position.Bottom} id="output" />
     </div>
   )
