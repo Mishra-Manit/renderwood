@@ -1426,3 +1426,200 @@ header {
     padding: 0 20px;
   }
 }
+
+/* ============================
+   Workflow Visualization Styles
+   ============================ */
+
+/* Workflow section on homepage */
+.workflow-section {
+  padding: 20px;
+  background: transparent;
+  margin-bottom: 60px;
+}
+
+/* Workflow page container */
+.workflow-page {
+  background: var(--win-gray);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.workflow-window {
+  background: white;
+  border: 2px solid var(--win-shadow);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.35);
+  height: 85vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Override React Flow defaults */
+.workflow-canvas-container {
+  width: 100%;
+  height: calc(100% - 32px);
+  background: white;
+}
+
+/* Node base styling */
+.workflow-node {
+  background: white;
+  border: 2px solid;
+  border-top-color: var(--win-white);
+  border-left-color: var(--win-white);
+  border-bottom-color: var(--win-dark-shadow);
+  border-right-color: var(--win-dark-shadow);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  width: auto;
+  font-family: var(--font-space-mono), monospace;
+}
+
+/* Node header with XP gradient */
+.workflow-node-header {
+  background: linear-gradient(
+    180deg,
+    #0997ff,
+    #0054e3 8%,
+    #0054e3 40%,
+    #0344b3 88%,
+    #003cad 93%,
+    #003299 95%,
+    #0050d7 100%
+  );
+  color: white;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.workflow-node-icon {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.workflow-node-body {
+  padding: 12px;
+  font-size: 11px;
+  color: var(--text-dark);
+  line-height: 1.4;
+  max-width: 280px;
+  width: max-content;
+}
+
+/* Node variants */
+.workflow-node-start {
+  border-color: #2d8f34;
+  background: #d5ecd5;
+}
+
+.workflow-node-end {
+  border-color: #c5694a;
+  background: #ffe8e0;
+}
+
+.workflow-node-agent {
+  border-color: #4a2f7a;
+  background: #f0ebff;
+}
+
+.workflow-node-model {
+  background: #fff9e6;
+  border-color: #d4a017;
+}
+
+/* Badge styling */
+.workflow-node-badge {
+  display: inline-block;
+  background: #d5ecd5;
+  color: #1a6b1a;
+  padding: 2px 6px;
+  border: 1px solid #1a6b1a;
+  font-size: 9px;
+  font-weight: bold;
+  margin-top: 4px;
+  border-radius: 2px;
+}
+
+.workflow-node-badge-purple {
+  background: #e5d5ff;
+  color: #4a2f7a;
+  border-color: #4a2f7a;
+}
+
+.workflow-node-badge-yellow {
+  background: #fff4cc;
+  color: #8b6914;
+  border-color: #d4a017;
+}
+
+/* Path display in end node */
+.workflow-node-path {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  color: #666;
+  margin-top: 6px;
+  padding: 4px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+}
+
+/* Edge styling */
+.react-flow__edge-path {
+  stroke: var(--xp-blue);
+  stroke-width: 2px;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #ff6b35;
+}
+
+/* React Flow handle styling */
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: var(--win-shadow);
+  border: 2px solid white;
+}
+
+.react-flow__handle-left {
+  left: -5px;
+}
+
+.react-flow__handle-right {
+  right: -5px;
+}
+
+.react-flow__handle-top {
+  top: -5px;
+}
+
+.react-flow__handle-bottom {
+  bottom: -5px;
+}
+
+/* React Flow controls */
+.react-flow__controls {
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--win-shadow);
+}
+
+.react-flow__controls-button {
+  background: var(--win-gray);
+  border-bottom: 1px solid var(--win-shadow);
+}
+
+.react-flow__controls-button:hover {
+  background: #f5f2e7;
+}
+
+/* React Flow background */
+.react-flow__background {
+  background-color: #fafafa;
+}

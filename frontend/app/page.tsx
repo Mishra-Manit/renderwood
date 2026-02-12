@@ -14,6 +14,7 @@ import {
   getVideoUrl,
 } from "../lib/api"
 import type { UploadedFile, VideoStyle, VideoStyleOption } from "../lib/api"
+import { WorkflowCanvas } from "../components/workflow/workflow-canvas"
 
 type WindowType = "computer" | "documents" | "recycle" | null
 
@@ -723,6 +724,22 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      <div className="workflow-section">
+        <div className="window workflow-window">
+          <div className="window-header">
+            <span>Renderwood - Agentic Video Pipeline</span>
+            <div className="window-controls">
+              <span>_</span>
+              <span>□</span>
+              <span>×</span>
+            </div>
+          </div>
+          <div className="workflow-canvas-container">
+            <WorkflowCanvas />
+          </div>
+        </div>
+      </div>
 
       <div className="taskbar">
         <button className="start-btn" onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}>
