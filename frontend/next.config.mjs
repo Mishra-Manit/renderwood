@@ -13,6 +13,7 @@ const nextConfig = {
   turbopack: {
     root: turbopackRoot,
   },
+  devIndicators: false,
 }
 
 export default nextConfig
