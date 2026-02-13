@@ -35,7 +35,7 @@ export const workflowNodes: WorkflowNode[] = [
     position: { x: 710, y: 50 },
     data: {
       label: "Enhance Prompt",
-      description: "Fireworks AI enhances\nprompt with style\nguidance and details",
+      description: "Enhance prompt with\nstyle guidance",
       modelName: "Kimi K2.5",
     },
   },
@@ -48,6 +48,7 @@ export const workflowNodes: WorkflowNode[] = [
     data: {
       label: "Plan Video",
       description: "Analyze requirements\nand plan implementation\nsteps",
+      showTopHandle: true,
     },
   },
   {
@@ -66,7 +67,6 @@ export const workflowNodes: WorkflowNode[] = [
     data: {
       label: "Render Video",
       description: "Execute remotion\nrender to generate\nMP4 output",
-      badge: "Multi-turn",
     },
   },
   {
@@ -88,7 +88,7 @@ export const workflowEdges: WorkflowEdge[] = [
   { id: "e3", source: "assetCopy", target: "promptEnhancement", type: "smoothstep", sourceHandle: "output", targetHandle: "input-left" },
   
   // Transition from Row 1 to Row 2: Prompt → Plan
-  { id: "e4", source: "promptEnhancement", target: "agentPlanning", type: "smoothstep" },
+  { id: "e4", source: "promptEnhancement", target: "agentPlanning", type: "smoothstep", targetHandle: "input-top" },
   
   // Row 2 (Right to Left): Plan → Edit → Render → Response
   { id: "e5", source: "agentPlanning", target: "agentEditing", type: "smoothstep" },

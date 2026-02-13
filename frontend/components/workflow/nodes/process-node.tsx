@@ -22,8 +22,8 @@ export function ProcessNode({ data }: ProcessNodeProps) {
         </div>
         {data.badge && <div className="workflow-node-badge">{data.badge}</div>}
       </div>
-      <Handle type="target" position={Position.Left} id="input" />
-      <Handle type="source" position={Position.Right} id="output" />
+      <Handle type="target" position={Position.Left} id="input" style={{ top: '50%' }} />
+      <Handle type="source" position={Position.Right} id="output" style={{ top: '50%' }} />
     </div>
   )
 }

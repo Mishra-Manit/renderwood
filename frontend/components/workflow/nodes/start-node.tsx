@@ -21,7 +21,7 @@ export function StartNode({ data }: StartNodeProps) {
           {data.description}
         </div>
       </div>
-      <Handle type="source" position={Position.Right} id="output" />
+      <Handle type="source" position={Position.Right} id="output" style={{ top: '50%' }} />
     </div>
   )
 }

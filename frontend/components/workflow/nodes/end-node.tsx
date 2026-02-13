@@ -24,7 +24,7 @@ export function EndNode({ data }: EndNodeProps) {
           <div className="workflow-node-path">{data.outputPath}</div>
         )}
       </div>
-      <Handle type="target" position={Position.Left} id="input" />
+      <Handle type="target" position={Position.Left} id="input" style={{ top: '50%' }} />
     </div>
   )
 }

@@ -26,8 +26,11 @@ export function AgentNode({ data }: AgentNodeProps) {
           </div>
         )}
       </div>
-      <Handle type="target" position={Position.Top} id="input" />
-      <Handle type="source" position={Position.Bottom} id="output" />
+      <Handle type="target" position={Position.Right} id="input" style={{ top: '50%' }} />
+      <Handle type="source" position={Position.Left} id="output" style={{ top: '50%' }} />
+      {data.showTopHandle && (
+        <Handle type="target" position={Position.Top} id="input-top" />
+      )}
     </div>
   )
 }
