@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import shutil
 from pathlib import Path
 
@@ -128,6 +127,7 @@ def _build_agent_options(job_dir: Path) -> ClaudeAgentOptions:
         permission_mode="bypassPermissions",
         max_turns=30,
         model=settings.claude_model,
+        env={"ANTHROPIC_API_KEY": settings.anthropic_api_key},
     )
 
 
@@ -141,9 +141,6 @@ async def _run_agent(
     with logfire.span("agent_execution"):
         turn_count = 0
         result_received = False
-
-        # Set the API key in the environment for the SDK
-        os.environ["ANTHROPIC_API_KEY"] = settings.anthropic_api_key
 
         async with ClaudeSDKClient(options=options) as client:
             await client.query(prompt)

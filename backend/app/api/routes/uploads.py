@@ -10,6 +10,7 @@ from fastapi import APIRouter, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
+from app.agent.upload_assets import _is_sidecar
 from app.config import settings
 
 router = APIRouter(tags=["uploads"])
@@ -68,11 +69,6 @@ def _read_metadata(file_path: Path) -> dict | None:
         return json.loads(meta_path.read_text())
     except (json.JSONDecodeError, OSError):
         return None
-
-
-def _is_sidecar(path: Path) -> bool:
-    """Check if a path is a sidecar metadata file (e.g. 'photo.jpg.json')."""
-    return path.suffix == ".json" and (path.parent / path.stem).exists()
 
 
 def _has_thumbnail(file_path: Path, meta: dict | None) -> bool:
