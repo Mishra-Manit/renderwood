@@ -35,7 +35,7 @@ checks (e.g., lockfiles).
 typography, and style.
 6) Output only the enhanced prompt. No preamble, no analysis, no extra
 commentary.
-7) Keep it under 500 words.
+7) Keep it under 1000 words.
 
 Prompt creation rules:
 - Max resolution is 1920x1080p.
@@ -53,6 +53,18 @@ Prompt creation rules:
   in the 'Inputs & assets' section. Reference it as `staticFile('music/<track>.mp3')`.
   Include instructions to use `<Audio>` from `@remotion/media` with fade-in/fade-out
   and volume between 0.15–0.3.
+- If cinematic framing is requested (or implied by trailer style), specify
+  letterbox bars and target ratio (for example 2.39:1 with explicit bar height).
+- Specify exact typography details when text overlays or title cards are used:
+  font family, fallback stack, font size range, weight, tracking, color, and
+  text shadow.
+- If text appears over video footage, require it to be large, bold, and
+  high-contrast with a visible shadow for readability.
+- If custom fonts are requested, include how to load them (for example via
+  `@remotion/google-fonts` loadFont()).
+- For trailer-style requests, include a second-by-second timeline in
+  Implementation details with scene content, transition type/duration, color
+  treatment, text beats, and explicit audio sync moments.
 
 Use this structure:
 - Title (one line)
@@ -66,30 +78,44 @@ Use the examples below as guidance for level of detail and structure.
 
 EXAMPLES (for style and completeness only; do not copy literally):
 
-Example 1 - Remotion + OCR + motion:
-Title: Remotion highlight animation from article screenshot
+Example 1 - Cinematic trailer:
+Title: Dune: Arrakis Rising cinematic trailer
 Objectives:
-- Import a local screenshot and extract text positions via OCR
-- Create a 5s motion composition with subtle 3D movement and blur intro
-- Highlight target phrases with a marker behind text
+- Assemble a 15-second, 1920x1080, 30fps trailer with three-act pacing and
+  escalating intensity
+- Use all uploaded clips with rapid transitions, cinematic grade, and aggressive
+  camera motion
+- Add bold title cards with animated entrances and align visual hits to music
 Inputs & assets:
-- Image: ~/Desktop/Screenshot 2026-01-31 at 17.15.12.png
+- dunes_cinematic.mp4 (0.0s–2.5s): Arrakis establishing shot
+- flying_ornithopter.mp4 (2.5s–4.5s): canyon chase
+- paul_atreides_closeup.mp4 (4.5s–6.5s): close-up reveal
+- sandworm_erupting.mp4 (6.5s–9.0s): impact moment
+- battle_scene.mp4 (9.0s–12.0s): rapid action montage
+- Audio: use `<Audio>` from `@remotion/media` with
+  `src={staticFile('music/speeding_up_dramatic.mp3')}`, volume 0.25,
+  fade-in 0.5s, fade-out 1.0s
 Constraints & requirements:
-- White background, 1920x1080, 5 seconds
-- Use Remotion best practices; respect existing lockfiles/package manager
+- Exact 15s duration; each clip 2-3s with hard cuts plus selective
+  cross-dissolves/flash transitions
+- Cinematic letterbox framing at 2.39:1 using explicit black bars
+- Color grading specified with exact CSS filters (contrast/saturate/sepia/hue)
+- Typography: Bebas Neue fallback Impact, all-caps, high tracking, white text
+  with subtle shadow
 Implementation details:
-- Run tesseract CLI to get bounding boxes for text
-- Build a new Remotion composition rendering the image centered on a white
-  full-HD canvas with generous padding
-- Animate a subtle zoom-in and 3D rotation across 5s (about 15 deg total on
-  each axis, left to right)
-- Apply initial blur and interpolate to sharp over 1 second
-- After blur completes, animate a rough.js highlighter sweep left to right
-  across the words "government shutdown" and "funding lapses"; ensure marker
-  is behind text
+- 0.0s-2.5s: fade from black into dunes shot with slow push-in (scale 1.0→1.15),
+  overlay "ARRAKIS" with scale-in and short hold
+- 2.5s-4.5s: hard cut to ornithopter chase, add motion blur and subtle shake,
+  cross-dissolve out
+- 4.5s-6.5s: dissolve to closeup, aggressive zoom (1.2→1.5), overlay quote with
+  glitch flicker entrance
+- 6.5s-9.0s: flash-to-white (0.2s) into sandworm reveal, dramatic zoom-out,
+  impact title beat at 8.0s synced to musical rise
+- 9.0s-12.0s: hard-cut battle montage with simulated rapid cuts and shake hits
+- 12.0s-14.0s: fade to title card + tagline, hold; hard cut to black and end at 15.0s
 Output & verification:
-- Composition renders correctly; highlight aligns with OCR boxes; motion is
-  subtle and continuous
+- Verify all five clips are used, transitions match timeline, text overlays
+  appear at planned beats, and major visual hits align to ~8.0s and ~12.0s
 
 Example 2 - Branded announcement video:
 Title: Cursor Agent Skills announcement video
@@ -146,18 +172,12 @@ async def enhance_prompt(
     style: VideoStyle = VideoStyle.GENERAL,
     assets_context: str = "",
 ) -> str:
-    """Expand a short prompt into a detailed, style-aware production brief.
+    """Expand user prompt into a detailed, style-aware production brief.
 
-    Parameters
-    ----------
-    user_prompt:
-        The raw user prompt text.
-    style:
-        The video production style to apply.  Defaults to ``GENERAL``.
-    assets_context:
-        Optional plain-text block listing uploaded assets and their
-        descriptions.  When non-empty, the prompt enhancer will weave
-        these assets into the production brief.
+    Args:
+        user_prompt: Raw user prompt text.
+        style: Video style to apply (default: GENERAL).
+        assets_context: Optional asset descriptions to include in the brief.
     """
     logfire = get_logfire()
 

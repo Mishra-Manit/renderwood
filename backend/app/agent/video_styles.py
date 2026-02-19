@@ -38,23 +38,39 @@ Additional style directive — **Trailer**:
 You are enhancing this prompt for a *cinematic trailer* video.  Ensure the
 enhanced brief follows trailer conventions:
 
-1) **Dramatic pacing**: Structure the video with a clear three-act arc —
-   opening hook (first 2-3 seconds), rising tension in the middle, and a
-   climactic reveal or title card at the end.
-2) **Title cards & typography**: Include bold, impactful title cards with
-   cinematic fonts (e.g., Bebas Neue, Montserrat Black).  Specify entrance
-   animations such as scale-up, glitch, or fade-through-black.
-3) **Quick cuts & transitions**: Use rapid scene transitions — hard cuts,
-   flash-to-white, or cross-dissolves — to build energy.
-4) **Cinematic color grading**: Specify a dramatic color palette (e.g., teal
-   and orange, high-contrast desaturated, dark moody tones).
-5) **Motion & camera work**: Include camera movements like slow push-ins,
-   dramatic zooms, or parallax depth effects on static elements.
-6) **Rhythm**: Align visual beats to an implied soundtrack tempo.  Mark beat
-   points in the timeline for key visual hits.
-7) **Final beat**: End with a logo reveal or tagline card that lingers for
-   1-2 seconds before a hard cut to black.
-8) **Background music (REQUIRED)**: Every trailer MUST include background music.
+1) **Fast pacing & dynamic editing**: Keep momentum high with rapid cuts and
+   energetic transitions. Do not let any single moment linger too long unless
+   intentionally used as a dramatic pause before a payoff.
+2) **Establish story immediately**: The opening 2-3 seconds must clearly set
+   the inciting incident, central conflict, or emotional hook.
+3) **Show, don't tell**: Prioritize visual storytelling over exposition.
+   Dialogue/text overlays should support key beats, not replace visuals.
+4) **Highlight unique strengths**: Identify and foreground what makes the film
+   special (action, emotion, spectacle, mystery, character, worldbuilding).
+5) **Strategic intentionality**: Every second should have a purpose. Avoid
+   filler moments.
+6) **Dramatic pacing arc**: Use a clear three-act structure for 15-30 seconds:
+   hook (0-3s), escalation (middle), climax + title/tagline (final beat).
+7) **Timeline specificity (REQUIRED)**: In Implementation details, provide a
+   second-by-second or timestamp-range breakdown for the full runtime. For each
+   segment, define: scene content, transition in/out and duration, motion notes,
+   text overlays, and key effects.
+8) **Transitions (REQUIRED)**: Specify exact transition types and timing between
+   scenes (for example hard cut, 0.3s cross-dissolve, 0.2s flash-to-white).
+9) **Color treatment (REQUIRED)**: Specify exact CSS filter values for the
+   intended cinematic grade (not just mood words).
+10) **Letterbox framing**: For cinematic look, specify target ratio and explicit
+    top/bottom bar dimensions in pixels (for example 2.39:1 with 140px bars).
+11) **Title cards & typography**: Include bold title/tagline cards and specify
+    font family + fallback, size range, weight, tracking, color, text shadow,
+    and entrance animation style (scale, glitch, fade-through-black, etc.).
+    If text is placed over video footage, require large bold typography with a
+    clearly visible shadow for legibility.
+12) **Rhythm & sync points**: Mark explicit timestamps where visual impacts
+    should land on music beats/crescendos (for example 8.0s and 12.0s).
+13) **Final beat**: End with a logo/title/tagline reveal that lingers for
+    1-2 seconds, then hard cut to black.
+14) **Background music (REQUIRED)**: Every trailer MUST include background music.
    Built-in tracks are available at `public/music/`:
    - `music/dramatic.mp3` — intense cinematic score (default choice)
    - `music/mysterious.mp3` — dark, atmospheric, suspenseful
