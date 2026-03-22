@@ -16,9 +16,11 @@ node_modules/
 
 ## Env files
 backend/.env
+backend-ts/.env
 
 ## Render outputs
 backend/remotion_project/props/
 backend/final_vids/
 backend/remotion_jobs/
 backend/uploads/
+backend-ts/remotion_jobs/
