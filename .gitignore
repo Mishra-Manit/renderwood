@@ -23,4 +23,7 @@ backend/remotion_project/props/
 backend/final_vids/
 backend/remotion_jobs/
 backend/uploads/
+backend-ts/dist/
+backend-ts/final_vids/
 backend-ts/remotion_jobs/
+backend-ts/uploads/
