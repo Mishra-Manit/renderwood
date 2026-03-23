@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "lib": [
       "dom",
       "dom.iterable",
@@ -23,6 +24,9 @@
       }
     ],
     "paths": {
+      "@shared/*": [
+        "../shared/*"
+      ],
       "@/*": [
         "./*"
       ]
@@ -30,6 +34,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "../shared/**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
