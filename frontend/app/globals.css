@@ -37,6 +37,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --font-vt323: "Courier New", monospace;
+  --font-space-mono: "Lucida Console", "Courier New", monospace;
   /* Windows XP + Spring theme variables */
   --win-gray: #ece9d8;
   --win-white: #ffffff;
@@ -175,7 +177,8 @@ body {
   gap: 2px;
 }
 
-.window-controls span {
+.window-controls span,
+.window-controls button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -186,6 +189,14 @@ body {
   font-weight: bold;
   color: white;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+}
+
+.window-controls button {
+  background: linear-gradient(180deg, #e8a07a, #c5694a);
+  border: 1px solid #a84830;
 }
 
 .window-controls span:nth-child(1) {
@@ -193,17 +204,20 @@ body {
   border: 1px solid #1a4fa0;
 }
 
-.window-controls span:nth-child(2) {
+.window-controls span:nth-child(2),
+.window-controls button:nth-child(2) {
   background: linear-gradient(180deg, #3c8dea, #2663c0);
   border: 1px solid #1a4fa0;
 }
 
-.window-controls span:nth-child(3) {
+.window-controls span:nth-child(3),
+.window-controls button:nth-child(3) {
   background: linear-gradient(180deg, #e8a07a, #c5694a);
   border: 1px solid #a84830;
 }
 
-.window-controls span:hover {
+.window-controls span:hover,
+.window-controls button:hover {
   filter: brightness(1.15);
 }
 
