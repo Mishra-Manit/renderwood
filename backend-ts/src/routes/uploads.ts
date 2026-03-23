@@ -4,6 +4,7 @@ import { pipeline } from "node:stream/promises";
 import { execFileSync } from "node:child_process";
 import { lookup as mimeLookup } from "mime-types";
 import type { FastifyInstance } from "fastify";
+import type { UploadedFile } from "@shared/video-contract";
 import { config } from "../config.js";
 import { isSidecar } from "../lib/upload-assets.js";
 
@@ -97,7 +98,7 @@ export async function uploadRoutes(app: FastifyInstance) {
     if (!existsSync(dir)) return [];
 
     const entries = readdirSync(dir).sort();
-    const files = [];
+    const files: UploadedFile[] = [];
 
     for (const name of entries) {
       const fp = join(dir, name);
@@ -136,7 +137,7 @@ export async function uploadRoutes(app: FastifyInstance) {
     const thumbnailName = generateVideoThumbnail(dest, mime);
     const meta = writeMetadata(dest, safeName, (data.fields.description as any)?.value ?? "", thumbnailName);
 
-    return {
+    const response: UploadedFile = {
       name: basename(dest),
       size: meta.size as number,
       type: meta.mime_type as string,
@@ -144,6 +145,8 @@ export async function uploadRoutes(app: FastifyInstance) {
       uploaded_at: meta.uploaded_at as string,
       has_thumbnail: Boolean(meta.thumbnail_name),
     };
+
+    return response;
   });
 
   app.delete<{ Params: { filename: string } }>("/api/uploads/:filename", async (request, reply) => {

@@ -1,49 +1,51 @@
-// ---------------------------------------------------------------------------
-// Video styles
-// ---------------------------------------------------------------------------
+import type {
+  UploadedFile,
+  VideoCreateRequest,
+  VideoCreateResponse,
+  VideoStyle,
+  VideoStyleOption,
+} from "@shared/video-contract";
 
-/** Mirrors the backend `VideoStyle` enum values. */
-export type VideoStyle = "general" | "trailer"
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
-export type VideoStyleOption = {
-  value: VideoStyle
-  label: string
-  description: string
+async function parseErrorMessage(response: Response): Promise<string> {
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (contentType.includes("application/json")) {
+    const json = (await response.json().catch(() => null)) as
+      | { detail?: string }
+      | null;
+
+    if (json?.detail) {
+      return json.detail;
+    }
+  }
+
+  return (await response.text().catch(() => "")).trim();
 }
 
-// ---------------------------------------------------------------------------
-// Response / entity types
-// ---------------------------------------------------------------------------
+async function requestJson<T>(
+  path: string,
+  init: RequestInit | undefined,
+  fallbackError: string,
+): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, init);
 
-export type VideoCreateResponse = {
-  job_id: string
-  status: string
-  output_path?: string | null
-  job_project_path?: string | null
-  error?: string | null
+  if (!response.ok) {
+    const message = await parseErrorMessage(response);
+    throw new Error(message ? `${fallbackError}: ${message}` : fallbackError);
+  }
+
+  return (await response.json()) as T;
 }
-
-export type UploadedFile = {
-  name: string
-  size: number
-  type: string
-  description: string
-  uploaded_at: string
-  has_thumbnail: boolean
-}
-
-// ---------------------------------------------------------------------------
-// API client
-// ---------------------------------------------------------------------------
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
 
 export async function listVideoStyles(): Promise<VideoStyleOption[]> {
-  const response = await fetch(`${API_BASE_URL}/api/video-styles`)
-  if (!response.ok) {
-    throw new Error(`Failed to fetch video styles (${response.status})`)
-  }
-  return response.json()
+  return requestJson<VideoStyleOption[]>(
+    "/api/video-styles",
+    undefined,
+    "Failed to fetch video styles",
+  );
 }
 
 export async function createVideo(
@@ -51,66 +53,80 @@ export async function createVideo(
   videoStyle: VideoStyle = "general",
   signal?: AbortSignal,
 ): Promise<VideoCreateResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/videos/create`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const payload: VideoCreateRequest = {
+    prompt,
+    video_style: videoStyle,
+  };
+
+  return requestJson<VideoCreateResponse>(
+    "/api/videos/create",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal,
     },
-    body: JSON.stringify({ prompt, video_style: videoStyle }),
-    signal,
-  })
-
-  if (!response.ok) {
-    const message = await response.text().catch(() => "")
-    throw new Error(`Video request failed (${response.status}). ${message}`.trim())
-  }
-
-  return response.json()
+    "Video request failed",
+  );
 }
 
 export async function listUploads(): Promise<UploadedFile[]> {
-  const response = await fetch(`${API_BASE_URL}/api/uploads`)
-  if (!response.ok) {
-    throw new Error(`Failed to list uploads (${response.status})`)
-  }
-  return response.json()
+  return requestJson<UploadedFile[]>(
+    "/api/uploads",
+    undefined,
+    "Failed to list uploads",
+  );
 }
 
-export async function uploadFile(file: File, description = ""): Promise<UploadedFile> {
-  const formData = new FormData()
-  formData.append("file", file)
-  formData.append("description", description)
+export async function uploadFile(
+  file: File,
+  description = "",
+): Promise<UploadedFile> {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("description", description);
 
-  const response = await fetch(`${API_BASE_URL}/api/uploads`, {
-    method: "POST",
-    body: formData,
-  })
-
-  if (!response.ok) {
-    const message = await response.text().catch(() => "")
-    throw new Error(`Upload failed (${response.status}). ${message}`.trim())
-  }
-
-  return response.json()
+  return requestJson<UploadedFile>(
+    "/api/uploads",
+    {
+      method: "POST",
+      body: formData,
+    },
+    "Upload failed",
+  );
 }
 
 export async function deleteUpload(filename: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`, {
-    method: "DELETE",
-  })
+  const response = await fetch(
+    `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`,
+    {
+      method: "DELETE",
+    },
+  );
+
   if (!response.ok) {
-    throw new Error(`Delete failed (${response.status})`)
+    const message = await parseErrorMessage(response);
+    throw new Error(message ? `Delete failed: ${message}` : "Delete failed");
   }
 }
 
 export function getUploadUrl(filename: string): string {
-  return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`
+  return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}`;
 }
 
 export function getUploadThumbnailUrl(filename: string): string {
-  return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}/thumbnail`
+  return `${API_BASE_URL}/api/uploads/${encodeURIComponent(filename)}/thumbnail`;
 }
 
 export function getVideoUrl(jobId: string): string {
-  return `${API_BASE_URL}/api/jobs/${encodeURIComponent(jobId)}/video`
+  return `${API_BASE_URL}/api/jobs/${encodeURIComponent(jobId)}/video`;
 }
+
+export type {
+  UploadedFile,
+  VideoCreateResponse,
+  VideoStyle,
+  VideoStyleOption,
+};

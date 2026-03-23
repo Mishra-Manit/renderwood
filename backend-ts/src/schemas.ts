@@ -1,20 +1,27 @@
 import { z } from "zod";
+import type {
+  UploadedFile,
+  VideoCreateRequest,
+  VideoCreateResponse,
+} from "@shared/video-contract";
 import { VideoStyle } from "./agent/video-styles.js";
 
-export const videoCreateRequestSchema = z.object({
+const videoStyleValues = [VideoStyle.GENERAL, VideoStyle.TRAILER] as const;
+
+export const videoCreateRequestSchema: z.ZodType<VideoCreateRequest> = z.object({
   prompt: z.string().min(1),
-  video_style: z.nativeEnum(VideoStyle).default(VideoStyle.GENERAL),
+  video_style: z.enum(videoStyleValues).default(VideoStyle.GENERAL),
 });
 
-export const videoCreateResponseSchema = z.object({
+export const videoCreateResponseSchema: z.ZodType<VideoCreateResponse> = z.object({
   job_id: z.string(),
-  status: z.string(),
-  output_path: z.string().optional(),
-  job_project_path: z.string().optional(),
-  error: z.string().optional(),
+  status: z.enum(["complete", "failed"]),
+  output_path: z.string().nullable().optional(),
+  job_project_path: z.string().nullable().optional(),
+  error: z.string().nullable().optional(),
 });
 
-export const uploadedFileInfoSchema = z.object({
+export const uploadedFileInfoSchema: z.ZodType<UploadedFile> = z.object({
   name: z.string(),
   size: z.number(),
   type: z.string(),
@@ -23,6 +30,4 @@ export const uploadedFileInfoSchema = z.object({
   has_thumbnail: z.boolean(),
 });
 
-export type VideoCreateRequest = z.infer<typeof videoCreateRequestSchema>;
-export type VideoCreateResponse = z.infer<typeof videoCreateResponseSchema>;
-export type UploadedFileInfo = z.infer<typeof uploadedFileInfoSchema>;
+export type { VideoCreateRequest, VideoCreateResponse, UploadedFile };

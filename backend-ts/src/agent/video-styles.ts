@@ -1,13 +1,35 @@
-export enum VideoStyle {
-  GENERAL = "general",
-  TRAILER = "trailer",
-}
+import type {
+  VideoStyle as SharedVideoStyle,
+  VideoStyleOption,
+} from "@shared/video-contract";
+
+export const VideoStyle = {
+  GENERAL: "general",
+  TRAILER: "trailer",
+} as const satisfies Record<string, SharedVideoStyle>;
+
+export type VideoStyle = SharedVideoStyle;
 
 export interface StyleConfig {
   label: string;
   description: string;
   systemPromptAddendum: string;
 }
+
+const STYLE_METADATA: Record<
+  VideoStyle,
+  Pick<StyleConfig, "label" | "description">
+> = {
+  [VideoStyle.GENERAL]: {
+    label: "General",
+    description: "Default video style - versatile production brief.",
+  },
+  [VideoStyle.TRAILER]: {
+    label: "Trailer",
+    description:
+      "Cinematic trailer with dramatic pacing, title cards, and quick cuts.",
+  },
+};
 
 const TRAILER_ADDENDUM = `
 Additional style directive — **Trailer**:
@@ -60,14 +82,11 @@ Keep all other base rules.  The output must still be a single enhanced prompt
 
 export const STYLE_CONFIGS: Record<VideoStyle, StyleConfig> = {
   [VideoStyle.GENERAL]: {
-    label: "General",
-    description: "Default video style — versatile production brief.",
+    ...STYLE_METADATA[VideoStyle.GENERAL],
     systemPromptAddendum: "",
   },
   [VideoStyle.TRAILER]: {
-    label: "Trailer",
-    description:
-      "Cinematic trailer with dramatic pacing, title cards, and quick cuts.",
+    ...STYLE_METADATA[VideoStyle.TRAILER],
     systemPromptAddendum: TRAILER_ADDENDUM,
   },
 };
@@ -76,13 +95,9 @@ export function getStyleConfig(style: VideoStyle): StyleConfig {
   return STYLE_CONFIGS[style];
 }
 
-export function listStyles(): Array<{
-  value: string;
-  label: string;
-  description: string;
-}> {
+export function listStyles(): VideoStyleOption[] {
   return Object.entries(STYLE_CONFIGS).map(([value, cfg]) => ({
-    value,
+    value: value as VideoStyle,
     label: cfg.label,
     description: cfg.description,
   }));

@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { join, basename } from "node:path";
 import type { FastifyInstance } from "fastify";
+import type { VideoCreateResponse } from "@shared/video-contract";
 import { config } from "../config.js";
 import { videoCreateRequestSchema } from "../schemas.js";
 import { listStyles } from "../agent/video-styles.js";
@@ -19,19 +20,23 @@ export async function videoRoutes(app: FastifyInstance) {
     try {
       const result = await runOrchestrator(jobId, body.prompt, body.video_style);
 
-      return {
+      const response: VideoCreateResponse = {
         job_id: jobId,
         status: "complete",
         output_path: result.output_path,
         job_project_path: result.job_project_path,
       };
+
+      return response;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      return {
+      const response: VideoCreateResponse = {
         job_id: jobId,
         status: "failed",
         error: message,
       };
+
+      return response;
     }
   });
 

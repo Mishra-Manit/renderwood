@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -12,8 +13,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "../shared/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
