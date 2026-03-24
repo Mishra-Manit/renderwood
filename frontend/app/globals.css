@@ -1637,3 +1637,228 @@ header {
 .react-flow__background {
   background-color: #fafafa;
 }
+
+/* ==========================================
+   EDITOR PAGE — Retro Game Character Select
+   ========================================== */
+
+.editor-page {
+  max-width: 1160px;
+  margin: 40px auto 0;
+  padding: 0 20px 48px;
+  position: relative;
+  z-index: 2;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 0;
+  margin: 4px;
+  border: 2px inset var(--win-gray);
+  background: #1a1a2e;
+}
+
+/* --- Character select sidebar --- */
+
+.editor-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  border-right: 2px solid #2a2a4a;
+  background: #12122a;
+}
+
+.editor-sidebar-title {
+  padding: 6px 10px;
+  font-family: var(--font-vt323), monospace;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  background: linear-gradient(180deg, #3a1a8e, #1a0a4e);
+  color: #ffcc00;
+  text-shadow: 0 0 6px rgba(255, 204, 0, 0.5);
+  text-align: center;
+  border-bottom: 2px solid #ffcc00;
+}
+
+.editor-sidebar-list {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-character-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  background: #1e1e3a;
+  border: 2px solid #3a3a5c;
+  cursor: grab;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  position: relative;
+}
+
+.editor-character-card:active {
+  cursor: grabbing;
+}
+
+.editor-character-card:hover {
+  border-color: #5a5a8c;
+  background: #24244a;
+}
+
+.editor-character-card.active {
+  border-color: #ffcc00;
+  background: #2a2040;
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.3), inset 0 0 8px rgba(255, 204, 0, 0.1);
+}
+
+.editor-character-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #0f0f1a;
+  border: 2px solid #3a3a5c;
+  image-rendering: auto;
+}
+
+.editor-character-card.active .editor-character-thumb {
+  border-color: #ffcc00;
+}
+
+.editor-character-name {
+  font-family: var(--font-vt323), monospace;
+  font-size: 18px;
+  color: #e0e0ff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.editor-character-card.active .editor-character-name {
+  color: #ffcc00;
+  text-shadow: 0 0 4px rgba(255, 204, 0, 0.4);
+}
+
+.editor-character-hint {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6a6a8c;
+}
+
+.editor-character-card.active .editor-character-hint {
+  color: #ffcc00;
+  animation: blinker 1.2s linear infinite;
+}
+
+/* --- Video preview + drop zone --- */
+
+.editor-player-area {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.editor-drop-zone {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 10, 78, 0.6);
+  border: 3px dashed #5a5aaa;
+  z-index: 10;
+  pointer-events: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.editor-drop-zone.hovering {
+  background: rgba(255, 204, 0, 0.15);
+  border-color: #ffcc00;
+}
+
+.editor-drop-zone-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-drop-zone-icon {
+  font-size: 32px;
+  color: #8888cc;
+  transition: color 0.15s;
+}
+
+.editor-drop-zone.hovering .editor-drop-zone-icon {
+  color: #ffcc00;
+}
+
+.editor-drop-zone-text {
+  font-family: var(--font-vt323), monospace;
+  font-size: 22px;
+  color: #aaaadd;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(170, 170, 221, 0.4);
+}
+
+.editor-drop-zone.hovering .editor-drop-zone-text {
+  color: #ffcc00;
+  text-shadow: 0 0 12px rgba(255, 204, 0, 0.5);
+}
+
+.editor-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4);
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* Override video controls in editor context */
+.editor-layout .video-viewer-area {
+  border: none;
+  margin: 0;
+}
+
+.editor-layout .video-controls-bar {
+  background: #12122a;
+  border-top: 2px solid #2a2a4a;
+}
+
+.editor-layout .video-ctrl-btn {
+  background: #1e1e3a;
+  border-color: #3a3a5c;
+  color: #aaaadd;
+}
+
+.editor-layout .video-ctrl-btn:hover {
+  background: #2a2a4a;
+  color: #ffcc00;
+}
+
+.editor-layout .video-ctrl-btn:active {
+  background: #14142a;
+  border-color: #2a2a4a;
+}
+
+.editor-layout .video-time-display {
+  color: #8888cc;
+  font-family: var(--font-vt323), monospace;
+  font-size: 14px;
+}
+
+.editor-layout .video-progress-track {
+  background: #1e1e3a;
+  border-color: #3a3a5c;
+}
+
+.editor-layout .video-progress-fill {
+  background: linear-gradient(90deg, #3a1a8e, #ffcc00);
+}
