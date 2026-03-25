@@ -1,42 +1,184 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent as ReactDragEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { preloadVideo } from "@remotion/preload";
 import type { PlayerRef } from "@remotion/player";
+import {
+  EDITOR_COMPOSITION_HEIGHT,
+  EDITOR_COMPOSITION_WIDTH,
+  EDITOR_DURATION_FRAMES,
+  EDITOR_FPS,
+  clientPointToCompositionPoint,
+  clamp,
+  getDefaultInsertPoint,
+  getDepthLane,
+  type CharacterAsset,
+  type DepthLane,
+  type SceneLayer,
+} from "@/lib/editor-scene";
 
-const DEMO_ASSETS = {
+const DEMO_ASSETS: {
+  background: string;
+  characters: readonly CharacterAsset[];
+} = {
   background: "/demo/background.mp4",
   characters: [
-    { id: "a", name: "Character A", thumbnail: "/demo/thumb-a.png", url: "/demo/character-a.webm" },
-    { id: "b", name: "Character B", thumbnail: "/demo/thumb-b.png", url: "/demo/character-b.webm" },
+    {
+      id: "a",
+      name: "Character A",
+      thumbnail: "/demo/thumb-a.png",
+      url: "/demo/character-a.webm",
+    },
+    {
+      id: "b",
+      name: "Character B",
+      thumbnail: "/demo/thumb-b.png",
+      url: "/demo/character-b.webm",
+    },
+    {
+      id: "dog",
+      name: "Dog",
+      thumbnail: "/demo/thumb-dog.png",
+      url: "/demo/character-dog.webm",
+    },
   ],
-} as const;
+};
 
-const FPS = 30;
-const DURATION_SECONDS = 6;
-const DURATION_FRAMES = FPS * DURATION_SECONDS;
+type LayerDragState = {
+  layerId: string;
+  startClientX: number;
+  startClientY: number;
+  originX: number;
+  originY: number;
+} | null;
+
+function makeLayerId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `layer-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function buildSceneLayer(
+  character: CharacterAsset,
+  existingLayerCount: number,
+  point = getDefaultInsertPoint(existingLayerCount)
+): SceneLayer {
+  return {
+    id: makeLayerId(),
+    characterId: character.id,
+    name: character.name,
+    url: character.url,
+    x: point.x,
+    y: point.y,
+    depth: 2,
+    scale: 1,
+  };
+}
+
+const INITIAL_LAYER = buildSceneLayer(DEMO_ASSETS.characters[0], 0);
 
 export function useEditor() {
   const playerRef = useRef<PlayerRef>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const flashTimeoutRef = useRef<number | null>(null);
+
+  const [layers, setLayers] = useState<SceneLayer[]>(() => [INITIAL_LAYER]);
+  const [selectedLayerId, setSelectedLayerId] = useState<string | null>(
+    INITIAL_LAYER.id
+  );
+  const [activeCharacterId, setActiveCharacterId] = useState(
+    INITIAL_LAYER.characterId
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingCharacter, setIsDraggingCharacter] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isLayerDragging, setIsLayerDragging] = useState(false);
+  const [dragState, setDragState] = useState<LayerDragState>(null);
   const [showFlash, setShowFlash] = useState(false);
 
+  const selectedLayer = useMemo(
+    () => layers.find((layer) => layer.id === selectedLayerId) ?? null,
+    [layers, selectedLayerId]
+  );
+
+  const selectedDepthInfo = selectedLayer
+    ? getDepthLane(selectedLayer.depth)
+    : null;
+
+  const sceneLayers = useMemo(
+    () =>
+      layers
+        .map((layer) => {
+          const depthInfo = getDepthLane(layer.depth);
+
+          return {
+            ...layer,
+            depthLabel: depthInfo.label,
+            depthHint: depthInfo.hint,
+            accent: depthInfo.accent,
+            isSelected: layer.id === selectedLayerId,
+          };
+        })
+        .sort((a, b) => b.depth - a.depth),
+    [layers, selectedLayerId]
+  );
+
+  const stageHandles = useMemo(
+    () =>
+      sceneLayers.map((layer) => ({
+        ...layer,
+        leftPercent: (layer.x / EDITOR_COMPOSITION_WIDTH) * 100,
+        topPercent: (layer.y / EDITOR_COMPOSITION_HEIGHT) * 100,
+        zIndex: layer.depth + (layer.isSelected ? 10 : 1),
+      })),
+    [sceneLayers]
+  );
+
+  const triggerFlash = useCallback(() => {
+    if (flashTimeoutRef.current !== null) {
+      window.clearTimeout(flashTimeoutRef.current);
+    }
+
+    setShowFlash(true);
+    flashTimeoutRef.current = window.setTimeout(() => {
+      setShowFlash(false);
+    }, 260);
+  }, []);
+
   useEffect(() => {
-    const cleanups = DEMO_ASSETS.characters.map((c) => preloadVideo(c.url));
+    const cleanups = DEMO_ASSETS.characters.map((character) =>
+      preloadVideo(character.url)
+    );
     cleanups.push(preloadVideo(DEMO_ASSETS.background));
-    return () => cleanups.forEach((fn) => fn());
+
+    return () => {
+      cleanups.forEach((fn) => fn());
+
+      if (flashTimeoutRef.current !== null) {
+        window.clearTimeout(flashTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
     const player = playerRef.current;
-    if (!player) return;
+    if (!player) {
+      return;
+    }
 
-    const onFrame = (e: { detail: { frame: number } }) => {
-      setCurrentFrame(e.detail.frame);
+    const onFrame = (event: { detail: { frame: number } }) => {
+      setCurrentFrame(event.detail.frame);
     };
     const onPlay = () => setIsPlaying(true);
     const onPause = () => setIsPlaying(false);
@@ -58,35 +200,231 @@ export function useEditor() {
     };
   }, []);
 
-  const selectCharacter = useCallback((index: number) => {
-    if (index === selectedIndex) return;
-    const frame = playerRef.current?.getCurrentFrame() ?? 0;
-    const wasPlaying = playerRef.current?.isPlaying() ?? false;
-    setSelectedIndex(index);
-    setShowFlash(true);
-    setTimeout(() => setShowFlash(false), 400);
-    requestAnimationFrame(() => {
-      playerRef.current?.seekTo(frame);
-      if (wasPlaying) {
-        playerRef.current?.play();
-      }
-    });
-  }, [selectedIndex]);
+  useEffect(() => {
+    if (!selectedLayer) {
+      return;
+    }
 
-  const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData("text/plain", String(index));
-    e.dataTransfer.effectAllowed = "move";
-    setIsDragging(true);
+    setActiveCharacterId(selectedLayer.characterId);
+  }, [selectedLayer]);
+
+  useEffect(() => {
+    if (!dragState) {
+      return;
+    }
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const rect = stageRef.current?.getBoundingClientRect();
+      if (!rect) {
+        return;
+      }
+
+      const deltaX =
+        ((event.clientX - dragState.startClientX) / rect.width) *
+        EDITOR_COMPOSITION_WIDTH;
+      const deltaY =
+        ((event.clientY - dragState.startClientY) / rect.height) *
+        EDITOR_COMPOSITION_HEIGHT;
+
+      setLayers((prevLayers) =>
+        prevLayers.map((layer) => {
+          if (layer.id !== dragState.layerId) {
+            return layer;
+          }
+
+          const nextPoint = clientPointToCompositionPoint(
+            rect.left +
+              ((dragState.originX + deltaX) / EDITOR_COMPOSITION_WIDTH) *
+                rect.width,
+            rect.top +
+              ((dragState.originY + deltaY) / EDITOR_COMPOSITION_HEIGHT) *
+                rect.height,
+            rect
+          );
+
+          return {
+            ...layer,
+            x: nextPoint.x,
+            y: nextPoint.y,
+          };
+        })
+      );
+    };
+
+    const handlePointerUp = () => {
+      setDragState(null);
+      setIsLayerDragging(false);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+    };
+  }, [dragState]);
+
+  const addCharacterToScene = useCallback(
+    (index: number, point?: { x: number; y: number }) => {
+      const character = DEMO_ASSETS.characters[index];
+      if (!character) {
+        return;
+      }
+
+      const nextLayer = buildSceneLayer(
+        character,
+        layers.length,
+        point ?? getDefaultInsertPoint(layers.length)
+      );
+
+      setLayers((prevLayers) => [...prevLayers, nextLayer]);
+      setSelectedLayerId(nextLayer.id);
+      setActiveCharacterId(character.id);
+      triggerFlash();
+    },
+    [layers.length, triggerFlash]
+  );
+
+  const insertCharacter = useCallback(
+    (index: number) => {
+      addCharacterToScene(index);
+    },
+    [addCharacterToScene]
+  );
+
+  const selectLayer = useCallback(
+    (layerId: string) => {
+      const layer = layers.find((sceneLayer) => sceneLayer.id === layerId);
+      if (!layer) {
+        return;
+      }
+
+      setSelectedLayerId(layer.id);
+      setActiveCharacterId(layer.characterId);
+    },
+    [layers]
+  );
+
+  const removeLayer = useCallback((layerId: string) => {
+    setLayers((prevLayers) => {
+      const removedIndex = prevLayers.findIndex((layer) => layer.id === layerId);
+      if (removedIndex === -1) {
+        return prevLayers;
+      }
+
+      const nextLayers = prevLayers.filter((layer) => layer.id !== layerId);
+
+      setSelectedLayerId((currentSelectedLayerId) => {
+        if (currentSelectedLayerId !== layerId) {
+          return currentSelectedLayerId;
+        }
+
+        return nextLayers[Math.max(0, removedIndex - 1)]?.id ?? null;
+      });
+
+      return nextLayers;
+    });
+
+    setDragState(null);
+    setIsLayerDragging(false);
   }, []);
 
+  const resetSelectedLayer = useCallback(() => {
+    if (!selectedLayerId) {
+      return;
+    }
+
+    setLayers((prevLayers) =>
+      prevLayers.map((layer, index) => {
+        if (layer.id !== selectedLayerId) {
+          return layer;
+        }
+
+        const resetPoint = getDefaultInsertPoint(index);
+
+        return {
+          ...layer,
+          x: resetPoint.x,
+          y: resetPoint.y,
+          depth: 2,
+          scale: 1,
+        };
+      })
+    );
+
+    triggerFlash();
+  }, [selectedLayerId, triggerFlash]);
+
+  const updateSelectedDepth = useCallback(
+    (depth: DepthLane) => {
+      if (!selectedLayerId) {
+        return;
+      }
+
+      setLayers((prevLayers) =>
+        prevLayers.map((layer) =>
+          layer.id === selectedLayerId
+            ? {
+                ...layer,
+                depth,
+              }
+            : layer
+        )
+      );
+    },
+    [selectedLayerId]
+  );
+
+  const updateSelectedScale = useCallback(
+    (scale: number) => {
+      if (!selectedLayerId) {
+        return;
+      }
+
+      const nextScale = clamp(scale, 0.75, 1.35);
+
+      setLayers((prevLayers) =>
+        prevLayers.map((layer) =>
+          layer.id === selectedLayerId
+            ? {
+                ...layer,
+                scale: nextScale,
+              }
+            : layer
+        )
+      );
+    },
+    [selectedLayerId]
+  );
+
+  const updateSelectedScalePercent = useCallback(
+    (percent: number) => {
+      updateSelectedScale(percent / 100);
+    },
+    [updateSelectedScale]
+  );
+
+  const handleDragStart = useCallback(
+    (event: ReactDragEvent<HTMLElement>, index: number) => {
+      event.dataTransfer.setData("text/plain", String(index));
+      event.dataTransfer.effectAllowed = "copy";
+      setActiveCharacterId(DEMO_ASSETS.characters[index].id);
+      setIsDraggingCharacter(true);
+    },
+    []
+  );
+
   const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
+    setIsDraggingCharacter(false);
     setIsDragOver(false);
   }, []);
 
-  const handleDropZoneDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
+  const handleDropZoneDragOver = useCallback((event: ReactDragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
     setIsDragOver(true);
   }, []);
 
@@ -94,24 +432,67 @@ export function useEditor() {
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    const index = parseInt(e.dataTransfer.getData("text/plain"), 10);
-    if (!isNaN(index)) {
-      selectCharacter(index);
-    }
-    setIsDragging(false);
-    setIsDragOver(false);
-  }, [selectCharacter]);
+  const handleDrop = useCallback(
+    (event: ReactDragEvent) => {
+      event.preventDefault();
+
+      const index = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
+      const rect = stageRef.current?.getBoundingClientRect();
+
+      if (!Number.isNaN(index)) {
+        const point = rect
+          ? clientPointToCompositionPoint(event.clientX, event.clientY, rect)
+          : undefined;
+
+        addCharacterToScene(index, point);
+      }
+
+      setIsDraggingCharacter(false);
+      setIsDragOver(false);
+    },
+    [addCharacterToScene]
+  );
+
+  const handleLayerPointerDown = useCallback(
+    (layerId: string, event: ReactPointerEvent<HTMLButtonElement>) => {
+      if (event.button !== 0) {
+        return;
+      }
+
+      const layer = layers.find((sceneLayer) => sceneLayer.id === layerId);
+      if (!layer) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      setSelectedLayerId(layer.id);
+      setActiveCharacterId(layer.characterId);
+      setIsLayerDragging(true);
+      setDragState({
+        layerId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        originX: layer.x,
+        originY: layer.y,
+      });
+    },
+    [layers]
+  );
 
   const togglePlayPause = useCallback(() => {
     const player = playerRef.current;
-    if (!player) return;
+    if (!player) {
+      return;
+    }
+
     if (player.isPlaying()) {
       player.pause();
-    } else {
-      player.play();
+      return;
     }
+
+    player.play();
   }, []);
 
   const stop = useCallback(() => {
@@ -122,39 +503,66 @@ export function useEditor() {
   }, []);
 
   const seekToFraction = useCallback((fraction: number) => {
-    const frame = Math.round(fraction * DURATION_FRAMES);
+    const frame = Math.round(
+      clamp(fraction, 0, 1) * (EDITOR_DURATION_FRAMES - 1)
+    );
     playerRef.current?.seekTo(frame);
     setCurrentFrame(frame);
   }, []);
 
   const formatTime = useCallback((frame: number) => {
-    const totalSeconds = Math.floor(frame / FPS);
+    const totalSeconds = Math.floor(frame / EDITOR_FPS);
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
+
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
   return {
     playerRef,
-    fps: FPS,
-    durationInFrames: DURATION_FRAMES,
+    stageRef,
+    fps: EDITOR_FPS,
+    durationInFrames: EDITOR_DURATION_FRAMES,
     backgroundUrl: DEMO_ASSETS.background,
     characters: DEMO_ASSETS.characters,
-    selectedIndex,
-    selectedCharacterUrl: DEMO_ASSETS.characters[selectedIndex].url,
+    layers,
+    sceneLayers,
+    stageHandles,
+    activeCharacterId,
+    selectedLayer,
+    selectedDepth: selectedLayer?.depth ?? 2,
+    selectedDepthLabel: selectedDepthInfo?.label ?? null,
+    selectedDepthHint: selectedDepthInfo?.hint ?? null,
+    selectedScalePercent: selectedLayer
+      ? Math.round(selectedLayer.scale * 100)
+      : 100,
+    selectedPositionLabel: selectedLayer
+      ? `${Math.round(selectedLayer.x)}, ${Math.round(selectedLayer.y)}`
+      : null,
+    layerCount: layers.length,
     isPlaying,
     currentFrame,
-    progressPercent: (currentFrame / DURATION_FRAMES) * 100,
-    timeDisplay: `${formatTime(currentFrame)} / ${formatTime(DURATION_FRAMES)}`,
-    isDragging,
+    progressPercent:
+      (currentFrame / Math.max(1, EDITOR_DURATION_FRAMES - 1)) * 100,
+    timeDisplay: `${formatTime(currentFrame)} / ${formatTime(
+      EDITOR_DURATION_FRAMES
+    )}`,
+    isDraggingCharacter,
     isDragOver,
+    isLayerDragging,
     showFlash,
-    selectCharacter,
+    insertCharacter,
+    selectLayer,
+    removeLayer,
+    resetSelectedLayer,
+    updateSelectedDepth,
+    updateSelectedScalePercent,
     handleDragStart,
     handleDragEnd,
     handleDropZoneDragOver,
     handleDropZoneDragLeave,
     handleDrop,
+    handleLayerPointerDown,
     togglePlayPause,
     stop,
     seekToFraction,
