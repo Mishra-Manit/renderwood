@@ -291,7 +291,7 @@ export default function EditorPage() {
                           className="ev2-sc-btn"
                           onClick={() =>
                             editor.updateSelectedScalePercent(
-                              Math.max(80, editor.selectedScalePercent - 5)
+                              Math.max(40, editor.selectedScalePercent - 10)
                             )
                           }
                         >
@@ -305,7 +305,7 @@ export default function EditorPage() {
                           className="ev2-sc-btn"
                           onClick={() =>
                             editor.updateSelectedScalePercent(
-                              Math.min(135, editor.selectedScalePercent + 5)
+                              Math.min(200, editor.selectedScalePercent + 10)
                             )
                           }
                         >

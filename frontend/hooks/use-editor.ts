@@ -325,7 +325,7 @@ export function useEditor() {
         return;
       }
 
-      const nextScale = clamp(scale, 0.75, 1.35);
+      const nextScale = clamp(scale, 0.4, 2.0);
 
       setLayers((prevLayers) =>
         prevLayers.map((layer) =>
