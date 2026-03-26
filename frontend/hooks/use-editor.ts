@@ -18,8 +18,9 @@ import {
   EDITOR_FPS,
   clientPointToCompositionPoint,
   clamp,
-  getDefaultInsertPoint,
   getDepthLane,
+  getStageCenterPoint,
+  hitTestLayers,
   type CharacterAsset,
   type DepthLane,
   type SceneLayer,
@@ -36,18 +37,21 @@ const DEMO_ASSETS: {
       name: "Character A",
       thumbnail: "/demo/thumb-a.png",
       url: "/demo/character-a.webm",
+      chromaKey: { color: [0, 252, 0] as const, similarity: 0.28, smoothness: 0.12 },
     },
     {
       id: "b",
       name: "Character B",
       thumbnail: "/demo/thumb-b.png",
       url: "/demo/character-b.webm",
+      chromaKey: { color: [67, 159, 76] as const, similarity: 0.14, smoothness: 0.06 },
     },
     {
       id: "dog",
       name: "Dog",
       thumbnail: "/demo/thumb-dog.png",
       url: "/demo/character-dog.webm",
+      chromaKey: { color: [0, 0, 0] as const, similarity: 0.08, smoothness: 0.02 },
     },
   ],
 };
@@ -70,8 +74,7 @@ function makeLayerId() {
 
 function buildSceneLayer(
   character: CharacterAsset,
-  existingLayerCount: number,
-  point = getDefaultInsertPoint(existingLayerCount)
+  point: { x: number; y: number }
 ): SceneLayer {
   return {
     id: makeLayerId(),
@@ -82,10 +85,14 @@ function buildSceneLayer(
     y: point.y,
     depth: 2,
     scale: 1,
+    chromaKey: character.chromaKey,
   };
 }
 
-const INITIAL_LAYER = buildSceneLayer(DEMO_ASSETS.characters[0], 0);
+const INITIAL_LAYER = buildSceneLayer(
+  DEMO_ASSETS.characters[0],
+  getStageCenterPoint()
+);
 
 export function useEditor() {
   const playerRef = useRef<PlayerRef>(null);
@@ -105,6 +112,7 @@ export function useEditor() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isLayerDragging, setIsLayerDragging] = useState(false);
   const dragStateRef = useRef<LayerDragState>(null);
+  const lastCursorPointRef = useRef<{ x: number; y: number } | null>(null);
   const [showFlash, setShowFlash] = useState(false);
 
   const selectedLayer = useMemo(
@@ -132,17 +140,6 @@ export function useEditor() {
         })
         .sort((a, b) => b.depth - a.depth),
     [layers, selectedLayerId]
-  );
-
-  const stageHandles = useMemo(
-    () =>
-      sceneLayers.map((layer) => ({
-        ...layer,
-        leftPercent: (layer.x / EDITOR_COMPOSITION_WIDTH) * 100,
-        topPercent: (layer.y / EDITOR_COMPOSITION_HEIGHT) * 100,
-        zIndex: layer.depth + (layer.isSelected ? 10 : 1),
-      })),
-    [sceneLayers]
   );
 
   const triggerFlash = useCallback(() => {
@@ -209,29 +206,25 @@ export function useEditor() {
   }, [selectedLayer]);
 
   const addCharacterToScene = useCallback(
-    (index: number, point?: { x: number; y: number }) => {
+    (index: number, point: { x: number; y: number }) => {
       const character = DEMO_ASSETS.characters[index];
       if (!character) {
         return;
       }
 
-      const nextLayer = buildSceneLayer(
-        character,
-        layers.length,
-        point ?? getDefaultInsertPoint(layers.length)
-      );
+      const nextLayer = buildSceneLayer(character, point);
 
       setLayers((prevLayers) => [...prevLayers, nextLayer]);
       setSelectedLayerId(nextLayer.id);
       setActiveCharacterId(character.id);
       triggerFlash();
     },
-    [layers.length, triggerFlash]
+    [triggerFlash]
   );
 
   const insertCharacter = useCallback(
     (index: number) => {
-      addCharacterToScene(index);
+      addCharacterToScene(index, getStageCenterPoint());
     },
     [addCharacterToScene]
   );
@@ -284,7 +277,7 @@ export function useEditor() {
           return layer;
         }
 
-        const resetPoint = getDefaultInsertPoint(index);
+        const resetPoint = getStageCenterPoint();
 
         return {
           ...layer,
@@ -378,14 +371,9 @@ export function useEditor() {
       event.preventDefault();
 
       const index = Number.parseInt(event.dataTransfer.getData("text/plain"), 10);
-      const rect = stageRef.current?.getBoundingClientRect();
 
       if (!Number.isNaN(index)) {
-        const point = rect
-          ? clientPointToCompositionPoint(event.clientX, event.clientY, rect)
-          : undefined;
-
-        addCharacterToScene(index, point);
+        addCharacterToScene(index, getStageCenterPoint());
       }
 
       setIsDraggingCharacter(false);
@@ -394,44 +382,71 @@ export function useEditor() {
     [addCharacterToScene]
   );
 
-  const handleLayerPointerDown = useCallback(
-    (layerId: string, event: ReactPointerEvent<HTMLButtonElement>) => {
+  const handleStagePointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const rect = stageRef.current?.getBoundingClientRect();
+      if (!rect) {
+        return;
+      }
+
+      lastCursorPointRef.current = clientPointToCompositionPoint(
+        event.clientX,
+        event.clientY,
+        rect
+      );
+    },
+    []
+  );
+
+  const handleStagePointerDown = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.button !== 0) {
         return;
       }
 
-      const layer = layers.find((sceneLayer) => sceneLayer.id === layerId);
-      if (!layer) {
+      const rect = stageRef.current?.getBoundingClientRect();
+      if (!rect) {
+        return;
+      }
+
+      const point = clientPointToCompositionPoint(
+        event.clientX,
+        event.clientY,
+        rect
+      );
+      const hitLayer = hitTestLayers(point.x, point.y, layers);
+
+      if (!hitLayer) {
+        setSelectedLayerId(null);
         return;
       }
 
       event.preventDefault();
-      event.stopPropagation();
 
-      setSelectedLayerId(layer.id);
-      setActiveCharacterId(layer.characterId);
+      setSelectedLayerId(hitLayer.id);
+      setActiveCharacterId(hitLayer.characterId);
       setIsLayerDragging(true);
 
       const ds: NonNullable<LayerDragState> = {
-        layerId,
+        layerId: hitLayer.id,
         startClientX: event.clientX,
         startClientY: event.clientY,
-        originX: layer.x,
-        originY: layer.y,
+        originX: hitLayer.x,
+        originY: hitLayer.y,
       };
       dragStateRef.current = ds;
 
       const onMove = (e: PointerEvent) => {
-        const rect = stageRef.current?.getBoundingClientRect();
-        if (!rect) {
+        const stageRect = stageRef.current?.getBoundingClientRect();
+        if (!stageRect) {
           return;
         }
 
         const deltaX =
-          ((e.clientX - ds.startClientX) / rect.width) *
+          ((e.clientX - ds.startClientX) / stageRect.width) *
           EDITOR_COMPOSITION_WIDTH;
         const deltaY =
-          ((e.clientY - ds.startClientY) / rect.height) *
+          ((e.clientY - ds.startClientY) / stageRect.height) *
           EDITOR_COMPOSITION_HEIGHT;
 
         setLayers((prevLayers) =>
@@ -441,13 +456,13 @@ export function useEditor() {
             }
 
             const nextPoint = clientPointToCompositionPoint(
-              rect.left +
+              stageRect.left +
                 ((ds.originX + deltaX) / EDITOR_COMPOSITION_WIDTH) *
-                  rect.width,
-              rect.top +
+                  stageRect.width,
+              stageRect.top +
                 ((ds.originY + deltaY) / EDITOR_COMPOSITION_HEIGHT) *
-                  rect.height,
-              rect
+                  stageRect.height,
+              stageRect
             );
 
             return { ...l, x: nextPoint.x, y: nextPoint.y };
@@ -516,7 +531,6 @@ export function useEditor() {
     characters: DEMO_ASSETS.characters,
     layers,
     sceneLayers,
-    stageHandles,
     activeCharacterId,
     selectedLayer,
     selectedDepth: selectedLayer?.depth ?? 2,
@@ -551,7 +565,8 @@ export function useEditor() {
     handleDropZoneDragOver,
     handleDropZoneDragLeave,
     handleDrop,
-    handleLayerPointerDown,
+    handleStagePointerMove,
+    handleStagePointerDown,
     togglePlayPause,
     stop,
     seekToFraction,

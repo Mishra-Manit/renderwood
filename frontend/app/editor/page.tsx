@@ -9,6 +9,12 @@ import { LayeredScene } from "@/compositions/layered-scene";
 import { useEditor } from "@/hooks/use-editor";
 import { DEPTH_LANES } from "@/lib/editor-scene";
 
+const STAGE_HIT_AREA_STYLE: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  zIndex: 6,
+};
+
 export default function EditorPage() {
   const editor = useEditor();
 
@@ -74,30 +80,14 @@ export default function EditorPage() {
                 />
               </div>
 
-              <div className="ev2-markers">
-                {editor.stageHandles.map((h) => (
-                  <button
-                    key={h.id}
-                    type="button"
-                    className={`ev2-mk${h.isSelected ? " on" : ""}`}
-                    style={
-                      {
-                        left: `${h.leftPercent}%`,
-                        top: `${h.topPercent}%`,
-                        zIndex: h.zIndex,
-                        "--c": h.accent,
-                      } as CSSProperties
-                    }
-                    onClick={() => editor.selectLayer(h.id)}
-                    onPointerDown={(e) =>
-                      editor.handleLayerPointerDown(h.id, e)
-                    }
-                  >
-                    <span className="ev2-mk-ring" />
-                    <span className="ev2-mk-char">{h.name.slice(-1)}</span>
-                  </button>
-                ))}
-              </div>
+              <div
+                style={{
+                  ...STAGE_HIT_AREA_STYLE,
+                  cursor: editor.isLayerDragging ? "grabbing" : "default",
+                }}
+                onPointerMove={editor.handleStagePointerMove}
+                onPointerDown={editor.handleStagePointerDown}
+              />
 
               {editor.layerCount === 0 && (
                 <div className="ev2-nil">

@@ -1679,79 +1679,6 @@ header {
   background: #050711;
 }
 
-/* -- Stage Markers ------------------------------------------ */
-
-.ev2-markers {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-
-.ev2-mk {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  pointer-events: auto;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: 2.5px solid var(--c, #6a76c9);
-  background: rgba(8, 10, 24, 0.82);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: grab;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-  padding: 0;
-  outline: none;
-}
-
-.ev2-mk:hover {
-  transform: translate(-50%, -50%) scale(1.15);
-  box-shadow: 0 0 14px rgba(106, 118, 201, 0.4);
-}
-
-.ev2-mk:active {
-  cursor: grabbing;
-  transform: translate(-50%, -50%) scale(0.94);
-}
-
-.ev2-mk:focus-visible {
-  outline: 2px solid #ffcc00;
-  outline-offset: 3px;
-}
-
-.ev2-mk.on {
-  border-color: #ffcc00;
-  background: rgba(20, 18, 40, 0.92);
-  animation: ev2-mk-pulse 1.8s ease-in-out infinite;
-}
-
-.ev2-mk-ring {
-  position: absolute;
-  inset: -6px;
-  border-radius: 999px;
-  border: 1px solid rgba(106, 118, 201, 0.18);
-  pointer-events: none;
-}
-
-.ev2-mk.on .ev2-mk-ring {
-  border-color: rgba(255, 204, 0, 0.22);
-}
-
-.ev2-mk-char {
-  font-family: var(--font-vt323), monospace;
-  font-size: 16px;
-  color: #d5dcff;
-  text-transform: uppercase;
-  pointer-events: none;
-  line-height: 1;
-}
-
-.ev2-mk.on .ev2-mk-char {
-  color: #ffcc00;
-}
-
 /* -- Stage Overlays ----------------------------------------- */
 
 .ev2-nil {
@@ -2210,15 +2137,6 @@ header {
 }
 
 /* -- Animations --------------------------------------------- */
-
-@keyframes ev2-mk-pulse {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 204, 0, 0.28);
-  }
-  50% {
-    box-shadow: 0 0 22px rgba(255, 204, 0, 0.48), 0 0 4px rgba(255, 204, 0, 0.7);
-  }
-}
 
 @keyframes ev2-card-glow {
   0%, 100% {

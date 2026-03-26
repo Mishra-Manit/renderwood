@@ -16,11 +16,11 @@ export const DEFAULT_VIDEO_STYLE_OPTIONS: VideoStyleOption[] = [
   },
 ];
 
-export const DESKTOP_SHORTCUTS: Array<{
-  icon: string;
-  label: string;
-  window: ShortcutWindow;
-}> = [
+export type DesktopShortcut =
+  | { icon: string; label: string; window: ShortcutWindow; href?: undefined }
+  | { icon: string; label: string; href: string; window?: undefined };
+
+export const DESKTOP_SHORTCUTS: DesktopShortcut[] = [
   {
     icon: "https://win98icons.alexmeub.com/icons/png/computer_explorer-5.png",
     label: "My Computer",
@@ -35,6 +35,11 @@ export const DESKTOP_SHORTCUTS: Array<{
     icon: "https://win98icons.alexmeub.com/icons/png/recycle_bin_full-4.png",
     label: "Recycle Bin",
     window: "recycle",
+  },
+  {
+    icon: "https://win98icons.alexmeub.com/icons/png/windows_movie-0.png",
+    label: "Video Editor",
+    href: "/editor",
   },
 ];
 

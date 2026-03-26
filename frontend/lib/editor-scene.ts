@@ -11,11 +11,18 @@ export const EDITOR_STAGE_BOUNDS = {
   maxY: EDITOR_COMPOSITION_HEIGHT - 90,
 } as const;
 
+export type ChromaKeyConfig = {
+  color: readonly [number, number, number];
+  similarity: number;
+  smoothness: number;
+};
+
 export type CharacterAsset = {
   id: string;
   name: string;
   thumbnail: string;
   url: string;
+  chromaKey?: ChromaKeyConfig;
 };
 
 export type DepthLane = 0 | 1 | 2 | 3 | 4;
@@ -29,6 +36,7 @@ export type SceneLayer = {
   y: number;
   depth: DepthLane;
   scale: number;
+  chromaKey?: ChromaKeyConfig;
 };
 
 export type EditorSceneInputProps = {
@@ -122,6 +130,45 @@ export function getDepthVisuals(layer: Pick<SceneLayer, "depth" | "scale">) {
   };
 }
 
+const HIT_RADIUS_BASE = 300;
+const HIT_RADIUS_MIN = 150;
+
+export function hitTestLayers(
+  compositionX: number,
+  compositionY: number,
+  layers: readonly SceneLayer[]
+): SceneLayer | null {
+  let bestLayer: SceneLayer | null = null;
+  let bestDepth = -1;
+  let bestDistSq = Infinity;
+
+  for (const layer of layers) {
+    const visuals = getDepthVisuals(layer);
+    const hitRadius = Math.max(
+      HIT_RADIUS_MIN,
+      HIT_RADIUS_BASE * visuals.effectiveScale
+    );
+    const dx = compositionX - layer.x;
+    const dy = compositionY - layer.y;
+    const distSq = dx * dx + dy * dy;
+
+    if (distSq > hitRadius * hitRadius) {
+      continue;
+    }
+
+    if (
+      layer.depth > bestDepth ||
+      (layer.depth === bestDepth && distSq < bestDistSq)
+    ) {
+      bestLayer = layer;
+      bestDepth = layer.depth;
+      bestDistSq = distSq;
+    }
+  }
+
+  return bestLayer;
+}
+
 export function clientPointToCompositionPoint(
   clientX: number,
   clientY: number,
@@ -136,12 +183,9 @@ export function clientPointToCompositionPoint(
   );
 }
 
-export function getDefaultInsertPoint(existingLayerCount: number) {
-  const columnOffset = ((existingLayerCount % 5) - 2) * 90;
-  const rowOffset = (existingLayerCount % 2) * 28;
-
+export function getStageCenterPoint() {
   return clampToStage(
-    EDITOR_COMPOSITION_WIDTH / 2 + columnOffset,
-    EDITOR_COMPOSITION_HEIGHT * 0.7 - rowOffset
+    EDITOR_COMPOSITION_WIDTH / 2,
+    EDITOR_COMPOSITION_HEIGHT / 2
   );
 }

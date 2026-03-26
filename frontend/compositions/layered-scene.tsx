@@ -5,6 +5,7 @@ import {
   getDepthVisuals,
   type EditorSceneInputProps,
 } from "@/lib/editor-scene";
+import { ChromaKeyVideo } from "./chroma-key-video";
 
 export function LayeredScene({
   backgroundUrl,
@@ -51,10 +52,18 @@ export function LayeredScene({
               filter: `drop-shadow(0 ${visuals.shadowOffsetY}px ${visuals.shadowBlur}px rgba(0, 0, 0, ${visuals.shadowOpacity}))`,
             }}
           >
-            <Video
-              src={layer.url}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
+            {layer.chromaKey ? (
+              <ChromaKeyVideo
+                src={layer.url}
+                chromaKey={layer.chromaKey}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <Video
+                src={layer.url}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            )}
           </AbsoluteFill>
         );
       })}

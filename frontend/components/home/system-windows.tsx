@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
+import Link from "next/link";
 import type { UploadedFile } from "@/lib/api";
 import { getUploadThumbnailUrl, getUploadUrl } from "@/lib/api";
 import {
@@ -16,17 +17,28 @@ type DesktopIconsProps = {
 export function DesktopIcons({ onOpenWindow }: DesktopIconsProps) {
   return (
     <div className="desktop-icons">
-      {DESKTOP_SHORTCUTS.map((shortcut) => (
-        <button
-          key={shortcut.window}
-          type="button"
-          onClick={() => onOpenWindow(shortcut.window)}
-          className="icon-item"
-        >
-          <img src={shortcut.icon} alt={shortcut.label} />
-          <span>{shortcut.label}</span>
-        </button>
-      ))}
+      {DESKTOP_SHORTCUTS.map((shortcut) =>
+        shortcut.href ? (
+          <Link
+            key={shortcut.label}
+            href={shortcut.href}
+            className="icon-item"
+          >
+            <img src={shortcut.icon} alt={shortcut.label} />
+            <span>{shortcut.label}</span>
+          </Link>
+        ) : (
+          <button
+            key={shortcut.label}
+            type="button"
+            onClick={() => onOpenWindow(shortcut.window!)}
+            className="icon-item"
+          >
+            <img src={shortcut.icon} alt={shortcut.label} />
+            <span>{shortcut.label}</span>
+          </button>
+        ),
+      )}
     </div>
   );
 }
