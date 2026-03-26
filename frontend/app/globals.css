@@ -1809,8 +1809,8 @@ header {
 .ev2-hud {
   display: flex;
   align-items: stretch;
-  background: linear-gradient(180deg, #0e1330, #0a0d1f);
-  border-top: 2px solid #2a2a4a;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-shadow);
 }
 
 .ev2-panel {
@@ -1828,19 +1828,18 @@ header {
 .ev2-tag {
   font-family: var(--font-vt323), monospace;
   font-size: 13px;
-  color: #ffcc00;
+  color: var(--xp-blue);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 0 6px rgba(255, 204, 0, 0.25);
 }
 
 .ev2-sep {
   width: 1px;
-  background: linear-gradient(180deg, transparent, #2a3565 15%, #2a3565 85%, transparent);
+  background: var(--win-shadow);
   margin: 6px 0;
   flex-shrink: 0;
 }
@@ -1848,7 +1847,7 @@ header {
 .ev2-empty {
   font-family: var(--font-space-mono), monospace;
   font-size: 10px;
-  color: #4e567a;
+  color: var(--win-dark-shadow);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   padding-top: 8px;
@@ -1868,8 +1867,8 @@ header {
   align-items: center;
   gap: 5px;
   padding: 5px 5px 6px;
-  background: linear-gradient(180deg, #161d3a, #10152b);
-  border: 2px outset #4a5a96;
+  background: var(--win-gray);
+  border: 2px outset var(--win-gray);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   outline: none;
@@ -1879,40 +1878,39 @@ header {
 
 .ev2-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(106, 118, 201, 0.28);
-  border-color: #7384cf;
+  filter: brightness(1.04);
+  border-color: var(--xp-blue);
 }
 
 .ev2-card:active {
   transform: translateY(0);
-  box-shadow: none;
+  border-style: inset;
 }
 
 .ev2-card:focus-visible {
-  outline: 2px solid #ffcc00;
+  outline: 2px solid var(--xp-blue);
   outline-offset: 2px;
 }
 
 .ev2-card.active {
-  border-color: #ffcc00;
-  background: linear-gradient(180deg, #261e48, #1a143e);
-  box-shadow: 0 0 18px rgba(255, 204, 0, 0.28), inset 0 0 8px rgba(255, 204, 0, 0.06);
+  border-color: var(--xp-blue);
+  background: #f0ede4;
+  box-shadow: 0 0 6px rgba(0, 84, 227, 0.25);
   animation: ev2-card-glow 2.2s ease-in-out infinite;
 }
 
 .ev2-card-frame {
   width: 66px;
   height: 66px;
-  border: 2px inset #3a4a7d;
-  background: #08091a;
+  border: 2px inset var(--win-gray);
+  background: #ffffff;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
 }
 
 .ev2-card.active .ev2-card-frame {
-  border-color: #c9a020;
-  box-shadow: inset 0 0 6px rgba(255, 204, 0, 0.12);
+  border-color: var(--xp-blue);
 }
 
 .ev2-card-img {
@@ -1920,7 +1918,7 @@ header {
   height: 100%;
   object-fit: cover;
   object-position: center 15%;
-  filter: brightness(0.88) contrast(1.15) saturate(0.5) hue-rotate(25deg);
+  filter: brightness(1) contrast(1.05) saturate(0.85);
   pointer-events: none;
 }
 
@@ -1928,7 +1926,7 @@ header {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 58% 68% at center 26%, transparent 14%, #08091a 55%);
+  background: radial-gradient(ellipse 58% 68% at center 26%, transparent 14%, rgba(236, 233, 216, 0.18) 55%);
   pointer-events: none;
   z-index: 1;
 }
@@ -1936,7 +1934,7 @@ header {
 .ev2-card-name {
   font-family: var(--font-vt323), monospace;
   font-size: 12px;
-  color: #a8b0d4;
+  color: var(--text-dark);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   max-width: 100%;
@@ -1948,8 +1946,7 @@ header {
 }
 
 .ev2-card.active .ev2-card-name {
-  color: #ffcc00;
-  text-shadow: 0 0 4px rgba(255, 204, 0, 0.35);
+  color: var(--xp-blue);
 }
 
 .ev2-card-badge {
@@ -1959,8 +1956,8 @@ header {
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
-  background: #ffcc00;
-  color: #0a0e1b;
+  background: var(--xp-blue);
+  color: white;
   font-family: var(--font-vt323), monospace;
   font-size: 12px;
   font-weight: bold;
@@ -1968,7 +1965,7 @@ header {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  border: 2px solid #08091a;
+  border: 2px solid var(--win-gray);
   line-height: 1;
   z-index: 1;
 }
@@ -1985,14 +1982,14 @@ header {
 .ev2-chip {
   display: flex;
   align-items: stretch;
-  border: 1px solid #2a3565;
-  background: #0e1330;
+  border: 1px solid var(--win-shadow);
+  background: var(--win-white);
   transition: border-color 0.12s, box-shadow 0.12s;
 }
 
 .ev2-chip.on {
-  border-color: #ffcc00;
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.18);
+  border-color: var(--xp-blue);
+  box-shadow: 0 0 6px rgba(0, 84, 227, 0.18);
 }
 
 .ev2-chip-btn {
@@ -2002,7 +1999,7 @@ header {
   padding: 5px 8px;
   background: none;
   border: none;
-  color: #b5bcde;
+  color: var(--text-dark);
   font-family: var(--font-vt323), monospace;
   font-size: 14px;
   text-transform: uppercase;
@@ -2014,11 +2011,11 @@ header {
 }
 
 .ev2-chip-btn:hover {
-  color: #ffcc00;
+  color: var(--xp-blue);
 }
 
 .ev2-chip-btn:focus-visible {
-  outline: 2px solid #ffcc00;
+  outline: 2px solid var(--xp-blue);
   outline-offset: -2px;
 }
 
@@ -2035,8 +2032,8 @@ header {
   padding: 4px 7px;
   background: none;
   border: none;
-  border-left: 1px solid #2a3565;
-  color: #5e4a5a;
+  border-left: 1px solid var(--win-shadow);
+  color: var(--win-dark-shadow);
   font-family: var(--font-space-mono), monospace;
   font-size: 11px;
   cursor: pointer;
@@ -2045,12 +2042,12 @@ header {
 }
 
 .ev2-chip-del:hover {
-  color: #ff6b8a;
-  background: rgba(255, 107, 138, 0.08);
+  color: #cc3333;
+  background: rgba(204, 51, 51, 0.08);
 }
 
 .ev2-chip-del:focus-visible {
-  outline: 2px solid #ff6b8a;
+  outline: 2px solid var(--xp-blue);
   outline-offset: -2px;
 }
 
@@ -2072,7 +2069,7 @@ header {
 .ev2-ctrl-label {
   font-family: var(--font-space-mono), monospace;
   font-size: 9px;
-  color: #6b74a0;
+  color: var(--win-dark-shadow);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -2089,9 +2086,9 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #2a3565;
-  background: #0c1028;
-  color: #4e567a;
+  border: 1px solid var(--win-shadow);
+  background: var(--win-white);
+  color: var(--win-dark-shadow);
   font-family: var(--font-vt323), monospace;
   font-size: 15px;
   cursor: pointer;
@@ -2102,22 +2099,20 @@ header {
 }
 
 .ev2-lane:hover {
-  background: #182040;
-  color: #b5bcde;
-  border-color: #4a5a96;
+  background: #f5f2ea;
+  color: var(--text-dark);
+  border-color: var(--win-dark-shadow);
 }
 
 .ev2-lane:focus-visible {
-  outline: 2px solid #ffcc00;
+  outline: 2px solid var(--xp-blue);
   outline-offset: 1px;
 }
 
 .ev2-lane.on {
-  background: color-mix(in srgb, var(--c) 20%, #0c1028);
-  border-color: var(--c, #ffcc00);
-  color: var(--c, #ffcc00);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--c) 30%, transparent);
-  text-shadow: 0 0 4px color-mix(in srgb, var(--c) 40%, transparent);
+  background: color-mix(in srgb, var(--c) 12%, var(--win-white));
+  border-color: var(--c);
+  color: var(--c);
 }
 
 .ev2-scale-row {
@@ -2132,9 +2127,9 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #2a3565;
-  background: #0c1028;
-  color: #6b74a0;
+  border: 1px solid var(--win-shadow);
+  background: var(--win-gray);
+  color: var(--text-dark);
   font-family: var(--font-vt323), monospace;
   font-size: 18px;
   cursor: pointer;
@@ -2145,13 +2140,13 @@ header {
 }
 
 .ev2-sc-btn:hover {
-  background: #182040;
-  color: #ffcc00;
-  border-color: #4a5a96;
+  background: #f5f2ea;
+  color: var(--xp-blue);
+  border-color: var(--win-dark-shadow);
 }
 
 .ev2-sc-btn:focus-visible {
-  outline: 2px solid #ffcc00;
+  outline: 2px solid var(--xp-blue);
   outline-offset: 1px;
 }
 
@@ -2161,10 +2156,10 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 1px solid #2a3565;
-  border-bottom: 1px solid #2a3565;
-  background: #080c1a;
-  color: #b5bcde;
+  border-top: 1px solid var(--win-shadow);
+  border-bottom: 1px solid var(--win-shadow);
+  background: var(--win-white);
+  color: var(--text-dark);
   font-family: var(--font-vt323), monospace;
   font-size: 14px;
   line-height: 1;
@@ -2178,9 +2173,9 @@ header {
 
 .ev2-act {
   padding: 6px 10px;
-  border: 1px solid #2a3565;
-  background: #0c1028;
-  color: #a8b0d4;
+  border: 2px outset var(--win-gray);
+  background: var(--win-gray);
+  color: var(--text-dark);
   font-family: var(--font-vt323), monospace;
   font-size: 13px;
   text-transform: uppercase;
@@ -2192,25 +2187,26 @@ header {
 }
 
 .ev2-act:hover {
-  background: #182040;
-  color: #ffcc00;
-  border-color: #4a5a96;
+  background: #f5f2ea;
+  color: var(--xp-blue);
+}
+
+.ev2-act:active {
+  border-style: inset;
 }
 
 .ev2-act:focus-visible {
-  outline: 2px solid #ffcc00;
+  outline: 2px solid var(--xp-blue);
   outline-offset: 1px;
 }
 
 .ev2-act.danger {
-  border-color: #4a2838;
-  color: #d08a9e;
+  color: #cc3333;
 }
 
 .ev2-act.danger:hover {
-  background: #2e1422;
-  color: #ff6b8a;
-  border-color: #7a4060;
+  background: #fde8e8;
+  color: #aa0000;
 }
 
 /* -- Animations --------------------------------------------- */
@@ -2226,47 +2222,47 @@ header {
 
 @keyframes ev2-card-glow {
   0%, 100% {
-    box-shadow: 0 0 16px rgba(255, 204, 0, 0.22), inset 0 0 6px rgba(255, 204, 0, 0.04);
+    box-shadow: 0 0 6px rgba(0, 84, 227, 0.2);
   }
   50% {
-    box-shadow: 0 0 24px rgba(255, 204, 0, 0.38), inset 0 0 10px rgba(255, 204, 0, 0.08);
+    box-shadow: 0 0 12px rgba(0, 84, 227, 0.35);
   }
 }
 
 /* -- Video Controls Override -------------------------------- */
 
 .ev2 .video-controls-bar {
-  background: #0d1125;
-  border-top: 1px solid #24305b;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-shadow);
   flex-shrink: 0;
 }
 
 .ev2 .video-ctrl-btn {
-  background: #141a32;
-  border-color: #3a4a80;
-  color: #a0a9da;
+  background: var(--win-gray);
+  border: 2px outset var(--win-gray);
+  color: var(--text-dark);
 }
 
 .ev2 .video-ctrl-btn:hover {
-  background: #1e2848;
-  color: #ffcc00;
+  background: #f5f2ea;
+  color: var(--xp-blue);
 }
 
 .ev2 .video-ctrl-btn:active {
-  background: #0e1425;
+  border-style: inset;
 }
 
 .ev2 .video-time-display {
-  color: #8890c4;
+  color: var(--text-dark);
   font-family: var(--font-vt323), monospace;
   font-size: 14px;
 }
 
 .ev2 .video-progress-track {
-  background: #101528;
-  border-color: #3a4a80;
+  background: var(--win-white);
+  border: 1px inset var(--win-gray);
 }
 
 .ev2 .video-progress-fill {
-  background: linear-gradient(90deg, #3a1a8e, #ffcc00);
+  background: linear-gradient(90deg, var(--xp-blue), #3580ff);
 }

@@ -104,7 +104,7 @@ export function useEditor() {
   const [isDraggingCharacter, setIsDraggingCharacter] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isLayerDragging, setIsLayerDragging] = useState(false);
-  const [dragState, setDragState] = useState<LayerDragState>(null);
+  const dragStateRef = useRef<LayerDragState>(null);
   const [showFlash, setShowFlash] = useState(false);
 
   const selectedLayer = useMemo(
@@ -208,65 +208,6 @@ export function useEditor() {
     setActiveCharacterId(selectedLayer.characterId);
   }, [selectedLayer]);
 
-  useEffect(() => {
-    if (!dragState) {
-      return;
-    }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      const rect = stageRef.current?.getBoundingClientRect();
-      if (!rect) {
-        return;
-      }
-
-      const deltaX =
-        ((event.clientX - dragState.startClientX) / rect.width) *
-        EDITOR_COMPOSITION_WIDTH;
-      const deltaY =
-        ((event.clientY - dragState.startClientY) / rect.height) *
-        EDITOR_COMPOSITION_HEIGHT;
-
-      setLayers((prevLayers) =>
-        prevLayers.map((layer) => {
-          if (layer.id !== dragState.layerId) {
-            return layer;
-          }
-
-          const nextPoint = clientPointToCompositionPoint(
-            rect.left +
-              ((dragState.originX + deltaX) / EDITOR_COMPOSITION_WIDTH) *
-                rect.width,
-            rect.top +
-              ((dragState.originY + deltaY) / EDITOR_COMPOSITION_HEIGHT) *
-                rect.height,
-            rect
-          );
-
-          return {
-            ...layer,
-            x: nextPoint.x,
-            y: nextPoint.y,
-          };
-        })
-      );
-    };
-
-    const handlePointerUp = () => {
-      setDragState(null);
-      setIsLayerDragging(false);
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
-    window.addEventListener("pointercancel", handlePointerUp);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerup", handlePointerUp);
-      window.removeEventListener("pointercancel", handlePointerUp);
-    };
-  }, [dragState]);
-
   const addCharacterToScene = useCallback(
     (index: number, point?: { x: number; y: number }) => {
       const character = DEMO_ASSETS.characters[index];
@@ -328,7 +269,7 @@ export function useEditor() {
       return nextLayers;
     });
 
-    setDragState(null);
+    dragStateRef.current = null;
     setIsLayerDragging(false);
   }, []);
 
@@ -470,13 +411,61 @@ export function useEditor() {
       setSelectedLayerId(layer.id);
       setActiveCharacterId(layer.characterId);
       setIsLayerDragging(true);
-      setDragState({
+
+      const ds: NonNullable<LayerDragState> = {
         layerId,
         startClientX: event.clientX,
         startClientY: event.clientY,
         originX: layer.x,
         originY: layer.y,
-      });
+      };
+      dragStateRef.current = ds;
+
+      const onMove = (e: PointerEvent) => {
+        const rect = stageRef.current?.getBoundingClientRect();
+        if (!rect) {
+          return;
+        }
+
+        const deltaX =
+          ((e.clientX - ds.startClientX) / rect.width) *
+          EDITOR_COMPOSITION_WIDTH;
+        const deltaY =
+          ((e.clientY - ds.startClientY) / rect.height) *
+          EDITOR_COMPOSITION_HEIGHT;
+
+        setLayers((prevLayers) =>
+          prevLayers.map((l) => {
+            if (l.id !== ds.layerId) {
+              return l;
+            }
+
+            const nextPoint = clientPointToCompositionPoint(
+              rect.left +
+                ((ds.originX + deltaX) / EDITOR_COMPOSITION_WIDTH) *
+                  rect.width,
+              rect.top +
+                ((ds.originY + deltaY) / EDITOR_COMPOSITION_HEIGHT) *
+                  rect.height,
+              rect
+            );
+
+            return { ...l, x: nextPoint.x, y: nextPoint.y };
+          })
+        );
+      };
+
+      const onUp = () => {
+        dragStateRef.current = null;
+        setIsLayerDragging(false);
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointercancel", onUp);
+      };
+
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
     },
     [layers]
   );
